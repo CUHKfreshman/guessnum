@@ -1,44 +1,55 @@
+"use client"
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-export default function Home() {
+import { ReactTyped } from "react-typed";
+import FloatingNumbers from "@/components/custom/FloatingNumbers";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+
+import Home from "@/components/pages/Home";
+import Game from "@/components/pages/Game";
+export default function Page() {
+  const [animateWaves, setAnimateWaves] = useState(false);
+  const [showGame, setShowGame] = useState(false);
+  useEffect(() => {
+    // for switching component effect
+    setTimeout(() => {
+      if (animateWaves) {
+        setAnimateWaves(false);
+      }
+    }, 1000);
+  }, [animateWaves]);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-slate-800">
+    <main className="relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 bg-gradient-to-bl from-slate-800 via-purple-900 to-slate-800">{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
       {/** 
       <img src="/wave.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       <img src="/wave2.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       */}
       <div className="fixed left-0 top-0 w-full h-20 z-[999]">
         <div className="flex items-center justify-between h-full px-8">
-          <div className="text-slate-300 font-bold">🎲GUESS<span className="text-sky-400">NUM</span></div>
+          <div className="text-slate-300 font-bold select-none">🎲GUESS<span className="text-sky-500">NUM</span></div>
           <div className="flex items-center gap-4">
-            <button className="btn btn-secondary text-slate-300/80">Leaderboard</button>
-            <button className="btn btn-secondary text-slate-300/80">Subscribe</button>
+            <button className="btn btn-secondary bg-clip-text text-transparent font-semibold from-purple-500 via-violet-500 to-violet-500 bg-gradient-to-r">Subscribe</button>
+            <button className="btn btn-secondary bg-clip-text text-transparent font-semibold from-indigo-500 via-violet-600 to-violet-500 bg-gradient-to-l">Leaderboard</button>
           </div>
         </div>
       </div>
-      <div className="flex flex-row">
-        
-      <div className="flex flex-col items-start justify-center z-[999]">
-        <h1 className="text-7xl text-slate-100 mb-4 font-bold">
-        Crypto Conquest🎯
-        </h1>
-          <h1 className="text-5xl text-slate-200 mb-1">
-            {/** pr-1 because orbitron will be clipped wrongly using tailwindcss */}
-            Guess a <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-700 pr-1">Number</span>
-            , Win Your{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-700 pr-1">Tokens</span>
-          </h1>
-          <h1 className="text-2xl text-slate-200/80 uppercase font-semibold">
-            Is it... ... 0?
-          </h1>
+      <div className={`z-[100] fixed flex flex-col m-0 p-0 gap-0 justify-center items-start h-full w-full top-[-67%] transition ease-in-out duration-500 ${animateWaves ? "translate-y-[67%]" : ""}`}>
+        <div className={`relative w-full flex-2 m-0 p-0 ${animateWaves ? "mb-[-1px]" : "mb-[-1px] lg:mb-0"}`}>
+          <div className={`absolute top-0 h-full w-full bg-slate-200 transition ease-in-out duration-500 ${animateWaves ? "" : " opacity-[50%]"}`}></div>
+          <div className={`absolute top-0 h-full w-full bg-slate-200 transition ease-in-out duration-500 opacity-[50%]`}></div>
         </div>
-      </div>
+        <div className="relative w-full flex-1 m-0 p-0">
 
-      <div className="fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <button className="btn text-slate-400">- Play Now -</button>
+          <img src="/wave.svg" className={`absolute h-full w-full object-cover top-0 transition ease-in-out duration-500 ${animateWaves ? "" : " opacity-[50%]"}`} alt="Wave Background" />
+          <img src="/wave.svg" className={`absolute h-full w-full object-cover top-0 transform scale-x-[120%] -translate-x-4 md:-translate-x-20 transition ease-in-out duration-500 opacity-[50%]`} alt="Wave Background 2" />
         </div>
       </div>
+      {!showGame &&
+        <Home animateWaves={animateWaves} setAnimateWaves={setAnimateWaves} setShowGame={setShowGame} />
+      }
+      {showGame && <Game />}
+
+      <FloatingNumbers />
     </main>
   );
 }

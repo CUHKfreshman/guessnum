@@ -21,6 +21,57 @@
 .font-raleway {
     font-family: 'Raleway', sans-serif;
 }
+.folded-corner {
+  background: linear-gradient(-55.8deg,  rgb(203 213 225) 10.3em, rgb(30 41 59) 0) no-repeat;
+}
+.folded-corner::after{
+  content: '';
+  height: 18em;
+  width: 13em;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: inline-block;
+  background: linear-gradient(to left bottom, transparent 50%, rgb(71 85 105) 0);
+  transform: translate(.3em,-.2em) rotate(70deg);
+  border-bottom-left-radius: 5px;
+  box-shadow: -4px 3px 5px rgb(15 23 42);
+}
+.flip-card {
+  transform-style: preserve-3d;
+  transition: transform 0.05s; /* Adjusted for a smoother flip effect */
+  cursor: pointer;
+  position: relative;
+}
+
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+.flip-card-front.flipped {
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+@keyframes float {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
