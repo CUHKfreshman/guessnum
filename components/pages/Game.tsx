@@ -41,7 +41,6 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
         // if current > 0 then rotate to 180deg else rotate to -180deg
         //?not working
         const rotateY = currentRotateYRegArr ? (parseInt(currentRotateYRegArr[1]) > 0 ? -180 : 180) : 180;
-        console.log('rotateY:', rotateY);
         card.style.transform = `rotateY(${rotateY}deg)`;
         // Toggle the flipped status for the card that was clicked
         setFlippedCards(prevFlippedCards => ({
@@ -70,6 +69,16 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
         }
     };
 
+    const handleTryAgain = () => {
+        setFlippedCards({});
+        setGuessResults({});
+        setHasFoundMatch(false);
+        // reset cards rotate
+        const cards = document.querySelectorAll('.flip-card') as NodeListOf<HTMLDivElement>;
+        cards.forEach(card => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+    }
     return (
         <>
             <div className={`flex flex-row`}>
@@ -98,13 +107,13 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
                             }
                             return (
                                 <div className={`${showCard || guessResult !== undefined?"":"opacity-0"} ${guessResult===undefined &&showCard?'cursor-pointer':'cursor-default'} transition duration-500 relative`} style={{ perspective: "800px" }} key={index}>
-                                    <Card className={`${guessResult === null || guessResult === undefined?"bg-slate-100":guessResult?" bg-yellow-200":" bg-neutral-300"} flip-card transition-all duration-200 relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 flex justify-center items-center shadow-lg shadow-slate-800/80`}>
+                                    <Card className={`${guessResult === null || guessResult === undefined?"bg-slate-100":guessResult?" bg-yellow-300":" bg-neutral-300"} flip-card transition-all duration-200 relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 flex justify-center items-center shadow-lg shadow-slate-800/80`}>
                                         <CardContent className={`flip-card-front ${!!isFlipped ? 'flipped' : ''} w-full h-full flex justify-center items-center p-0`}>
                                             <p className="text-md md:text-2xl lg:text-4xl text-slate-700">{num}</p>
                                         </CardContent>
                                         <CardContent className={`flip-card-back transition duration-500 w-full h-full flex justify-center items-center p-0`}>
                                                     <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-out ${guessResult === null? "opacity-100":"opacity-0"}`}>❔</p>
-                                                    <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-in delay-300 ${guessResult === null? "opacity-0":"opacity-100"}`}>{guessResult===null? "":guessResult?'⭕':'✖'}</p>
+                                                    <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-in delay-300 ${guessResult === undefined?"": guessResult === null? "opacity-0":"opacity-100"}`}>{guessResult===null? "":guessResult?'⭕':'✖'}</p>
                                         </CardContent>
                                     </Card>
                                     <div className="absolute top-0 left-0 w-full h-full" onMouseMove={(e) => handleMouseMove(e, index)} onMouseOut={(e) => handleMouseOut(e, index)} onClick={(e) => handleCardClick(e, index)} />
@@ -112,9 +121,13 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
                             );
                         })}
                     </div>
-                    <button className="mt-4 text-violet-300">
-                        Try Again
-                    </button>
+           <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch ? "" : "opacity-[0%] hidden"}`}>
+                <div className="flex flex-col items-center justify-center gap-4">
+                    <button className="btn text-yellow-300 text-lg uppercase animate-pulse"
+                        onClick={()=>handleTryAgain()}>- Try Again -</button>
+                </div>
+            </div>
+                    
                 </div>
             </div>
         </>
