@@ -59,7 +59,9 @@
 .flip-card-front.flipped {
   transform: rotateY(0deg);
 }
-
+.text-shadow-special {
+  text-shadow: 0px 0px 20px  rgb(139 92 246);
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

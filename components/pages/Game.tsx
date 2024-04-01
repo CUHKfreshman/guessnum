@@ -3,8 +3,10 @@ import { MouseEvent, useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import fetchGuessResult from '@/services/gameApi';
 interface GameProps {
+    hasFoundMatch: boolean;
+    setHasFoundMatch: (value: boolean) => void;
 }
-export default function Game({ }: GameProps) {
+export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
     //State to track the flip status of each card using an object where the keys are card indices
     const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
     const [guessResults, setGuessResults] = useState<{ [key: number]: boolean | null }>({});
@@ -54,6 +56,7 @@ export default function Game({ }: GameProps) {
         try {
             const result = await fetchGuessResult();
             console.log('result:', result);
+            setHasFoundMatch(result);
             setGuessResults(prevGuessResults => ({
                 ...prevGuessResults,
                 [index]: result
@@ -71,15 +74,30 @@ export default function Game({ }: GameProps) {
         <>
             <div className={`flex flex-row`}>
                 <div className="flex flex-col items-center justify-center z-[50] select-none">
-                    <h1 className="text-2xl md:text-4xl lg:text-7xl text-slate-100 mb-4 font-bold text-nowrap">
-                        Choose Your Fortune!
+                    <h1 className={`${hasFoundMatch?"text-md md:text-2xl lg:text-4xl text-shadow-special":"text-2xl md:text-4xl lg:text-7xl"} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
+                        {Object.keys(guessResults).length < 10 && !hasFoundMatch?"Choose Your Fortune!":hasFoundMatch ? '🎉 Congratulations! You found a match! 🎉' : '❌ Sorry! No match found! ❌'}
                     </h1>
                     <div className="flex flex-row items-between justify-center w-full gap-4 flex-wrap">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num, index) => {
                             const isFlipped = flippedCards[index];
                             const guessResult = guessResults[index];
+                            let showCard = true;
+                            if(Object.keys(guessResults).length < 10 && !hasFoundMatch){
+                                showCard = true;
+                            }
+                            if(Object.keys(guessResults).length === 10 && !hasFoundMatch){
+                                showCard = false;
+                            }
+                            if(hasFoundMatch){
+                                if(guessResult){
+                                    showCard = true;
+                                }
+                                else{
+                                    showCard = false;
+                                }
+                            }
                             return (
-                                <div className="relative" style={{ perspective: "800px" }} key={index}>
+                                <div className={`${showCard || guessResult !== undefined?"":"opacity-0"} ${guessResult===undefined &&showCard?'cursor-pointer':'cursor-default'} transition duration-500 relative`} style={{ perspective: "800px" }} key={index}>
                                     <Card className={`${guessResult === null || guessResult === undefined?"bg-slate-100":guessResult?" bg-yellow-200":" bg-neutral-300"} flip-card transition-all duration-200 relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 flex justify-center items-center shadow-lg shadow-slate-800/80`}>
                                         <CardContent className={`flip-card-front ${!!isFlipped ? 'flipped' : ''} w-full h-full flex justify-center items-center p-0`}>
                                             <p className="text-md md:text-2xl lg:text-4xl text-slate-700">{num}</p>
@@ -94,6 +112,9 @@ export default function Game({ }: GameProps) {
                             );
                         })}
                     </div>
+                    <button className="mt-4 text-violet-300">
+                        Try Again
+                    </button>
                 </div>
             </div>
         </>

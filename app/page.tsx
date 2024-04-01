@@ -10,6 +10,7 @@ import Game from "@/components/pages/Game";
 export default function Page() {
   const [animateWaves, setAnimateWaves] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [hasFoundMatch, setHasFoundMatch] = useState<boolean>(false);
   useEffect(() => {
     // for switching component effect
     setTimeout(() => {
@@ -47,9 +48,9 @@ export default function Page() {
       {!showGame &&
         <Home animateWaves={animateWaves} setAnimateWaves={setAnimateWaves} setShowGame={setShowGame} />
       }
-      {showGame && <Game />}
+      {showGame && <Game hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />}
 
-      <FloatingNumbers />
+      <FloatingNumbers hasFoundMatch={hasFoundMatch} />
     </main>
   );
 }

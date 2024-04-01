@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 let numberId = 0; // unique identifier
-export default function FloatingNumbers() {
+interface NumberProps {
+    hasFoundMatch: boolean;
+}
+export default function FloatingNumbers({ hasFoundMatch }: NumberProps) {
     const [numbers, setNumbers] = useState<{ id: number; value: number; left: number; duration: number }[]>([]);
 
     useEffect(() => {
+        console.log('hasFoundMatch:', hasFoundMatch);
         // Function to generate and add a new number
         const generateNumber = () => {
             const newNumber = {
@@ -40,7 +44,7 @@ export default function FloatingNumbers() {
             {numbers.map(({ id, value, left, duration }) => (
                 <div
                     key={id}
-                    className="fixed top-0 text-slate-400 z-[1]"
+                    className={`${hasFoundMatch?"text-yellow-400":"text-slate-400"} fixed top-0 z-[1]`}
                     style={{
                         left: `${left}%`,
                         animation: `float ${duration}s ease-in forwards`,
