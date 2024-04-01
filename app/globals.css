@@ -39,9 +39,8 @@
 }
 .flip-card {
   transform-style: preserve-3d;
-  transition: transform 0.05s; /* Adjusted for a smoother flip effect */
   cursor: pointer;
-  position: relative;
+  transition-timing-function: linear;
 }
 
 
@@ -52,13 +51,21 @@
   left: 0;
   width: 100%;
   height: 100%;
+  backface-visibility: hidden;
 }
 .flip-card-back {
   transform: rotateY(180deg);
 }
 .flip-card-front.flipped {
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
+  transform: rotateY(0deg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
 }
 @keyframes float {
   0% {

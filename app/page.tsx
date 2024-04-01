@@ -29,7 +29,7 @@ export default function Page() {
           <div className="text-slate-300 font-bold select-none">🎲GUESS<span className="text-sky-500">NUM</span></div>
           <div className="flex items-center gap-4">
             <button className="btn btn-secondary bg-clip-text text-transparent font-semibold from-purple-500 via-violet-500 to-violet-500 bg-gradient-to-r">Subscribe</button>
-            <button className="btn btn-secondary bg-clip-text text-transparent font-semibold from-indigo-500 via-violet-600 to-violet-500 bg-gradient-to-l">Leaderboard</button>
+            <button className="btn btn-secondary bg-clip-text text-transparent font-semibold from-indigo-500 via-violet-600 to-violet-500 bg-gradient-to-l">Settings</button>
           </div>
         </div>
       </div>
