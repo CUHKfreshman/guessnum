@@ -45,7 +45,7 @@ export default function Home({animateWaves, setAnimateWaves, setShowGame}: HomeP
             </div>
             <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${animateWaves ? "opacity-[0%] " : ""}`}>
                 <div className="flex flex-col items-center justify-center gap-4">
-                    <button className="btn text-slate-300 text-lg uppercase animate-pulse"
+                    <button className="btn text-slate-300 text-lg uppercase animate-pulse select-none"
                         onClick={handleClicked}>- Play Now -</button>
                 </div>
             </div>

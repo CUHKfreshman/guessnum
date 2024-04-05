@@ -33,7 +33,7 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
     };
 
     const handleCardClick = async (e: MouseEvent<HTMLDivElement>, index: number) => {
-        if (!!flippedCards[index] || isFetchingRef.current) { return; }
+        if (!!flippedCards[index] || isFetchingRef.current || hasFoundMatch) { return; }
         const card = e.currentTarget.previousSibling as HTMLDivElement; // assuming the card is the previous sibling
         // get rotateY & rotateX values
         // rotate 180deg / -180deg according to the current value
@@ -113,7 +113,7 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
                                         </CardContent>
                                         <CardContent className={`flip-card-back transition duration-500 w-full h-full flex justify-center items-center p-0`}>
                                                     <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-out ${guessResult === null? "opacity-100":"opacity-0"}`}>❔</p>
-                                                    <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-in delay-300 ${guessResult === undefined?"": guessResult === null? "opacity-0":"opacity-100"}`}>{guessResult===null? "":guessResult?'⭕':'✖'}</p>
+                                                    <p className={`absolute text-md md:text-2xl lg:text-4xl text-slate-700 transition-all duration-100 ease-in delay-300 ${guessResult === undefined?"": guessResult === null? "opacity-0":"opacity-100"}`}>{guessResult===undefined || guessResult===null? "":guessResult?'⭕':'✖'}</p>
                                         </CardContent>
                                     </Card>
                                     <div className="absolute top-0 left-0 w-full h-full" onMouseMove={(e) => handleMouseMove(e, index)} onMouseOut={(e) => handleMouseOut(e, index)} onClick={(e) => handleCardClick(e, index)} />
@@ -123,7 +123,7 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
                     </div>
            <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch ? "" : "opacity-[0%] hidden"}`}>
                 <div className="flex flex-col items-center justify-center gap-4">
-                    <button className="btn text-yellow-300 text-lg uppercase animate-pulse"
+                    <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
                         onClick={()=>handleTryAgain()}>- Try Again -</button>
                 </div>
             </div>
