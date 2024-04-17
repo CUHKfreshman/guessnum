@@ -1,6 +1,8 @@
 'use client';
 import { Orbitron as FontSans } from "next/font/google";  
 import { Toaster } from "@/components/ui/toaster";
+import AppProvider from "@/providers/appContextProvider";
+import AnimateWavesProvider from "@/providers/AnimateWavesProvider";
 import "./globals.css";
 
 import { cn } from "@/lib/utils";
@@ -26,8 +28,12 @@ export default function RootLayout({ children }: Readonly<{
           fontSans.variable
         )}
       >
+      <AppProvider>
+        <AnimateWavesProvider>
         <Toaster />
         {children}
+        </AnimateWavesProvider>
+    </AppProvider>
       </body>
     </html>
   )

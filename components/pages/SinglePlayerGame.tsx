@@ -2,11 +2,14 @@
 import { MouseEvent, useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import fetchGuessResult from '@/services/gameApi';
-interface GameProps {
+import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
+interface SinglePlayerGameProps {
     hasFoundMatch: boolean;
     setHasFoundMatch: (value: boolean) => void;
+    setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
 }
-export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
+export default function SinglePlayerGame({hasFoundMatch,setHasFoundMatch, setCurrentPage }: SinglePlayerGameProps) {
+    const { setAnimateWaves } = useAnimateWaves();
     //State to track the flip status of each card using an object where the keys are card indices
     const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
     const [guessResults, setGuessResults] = useState<{ [key: number]: boolean | null }>({});
@@ -79,6 +82,14 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
             card.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });
     }
+    const handleBack = () => {
+        setAnimateWaves(true);
+        setTimeout(() => {
+            setHasFoundMatch(false);
+            setCurrentPage('PreGame');
+        }, 500);
+
+    }
     return (
         <>
             <div className={`flex flex-row`}>
@@ -124,7 +135,9 @@ export default function Game({hasFoundMatch,setHasFoundMatch }: GameProps) {
            <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch ? "" : "opacity-[0%] hidden"}`}>
                 <div className="flex flex-col items-center justify-center gap-4">
                     <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
-                        onClick={()=>handleTryAgain()}>- Try Again -</button>
+                        onClick={handleTryAgain}>- Try Again -</button>
+                        <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
+                            onClick={handleBack}>- Back -</button>
                 </div>
             </div>
                     

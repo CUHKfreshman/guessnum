@@ -1,19 +1,19 @@
 'use client';
 import { ReactTyped } from "react-typed";
 import { useEffect, useState } from "react";
+import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
 interface HomeProps {
-    animateWaves: boolean;
-    setAnimateWaves: (value: boolean) => void;
-    setShowPreGame: (value: boolean) => void;
+    setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
 }
-export default function Home({animateWaves, setAnimateWaves, setShowPreGame}: HomeProps) {
-    const handleClicked = () => {
-        setAnimateWaves(!animateWaves);
+export default function Home({setCurrentPage}: HomeProps) {
+    const { animateWaves, setAnimateWaves } = useAnimateWaves();
+    const handleClick = () => {
+        setAnimateWaves(true);
         // for switching component effect
         setTimeout(() => {
                 setAnimateWaves(false);
-                setShowPreGame(true);
-                console.log("Switching to Game Component");
+                setCurrentPage("PreGame");
+                //console.log("Switching to PreGame Component");
             
         }, 1000);
     }
@@ -46,7 +46,7 @@ export default function Home({animateWaves, setAnimateWaves, setShowPreGame}: Ho
             <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${animateWaves ? "opacity-[0%] " : ""}`}>
                 <div className="flex flex-col items-center justify-center gap-4">
                     <button className="btn text-slate-300 text-lg uppercase animate-pulse select-none"
-                        onClick={handleClicked}>- Play Now -</button>
+                        onClick={handleClick}>- Play Now -</button>
                 </div>
             </div>
         </>

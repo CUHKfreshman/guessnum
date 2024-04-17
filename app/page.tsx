@@ -3,18 +3,29 @@ import Image from "next/image";
 import { ReactTyped } from "react-typed";
 import FloatingNumbers from "@/components/custom/FloatingNumbers";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from 'framer-motion';
-import { useConfig } from "wagmi";
 import Home from "@/components/pages/Home";
-import Game from "@/components/pages/Game";
+import SinglePlayerGame from "@/components/pages/SinglePlayerGame";
 import PreGame from "@/components/pages/PreGame";
-import AppProvider from "@/providers/appContextProvider";
 import WalletButton from "@/components/custom/WalletButton";
+import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
 export default function Page() {
-  const [animateWaves, setAnimateWaves] = useState(false);
-  const [showPreGame, setShowPreGame] = useState(false);
-  const [showGame, setShowGame] = useState(false);
+  const { animateWaves, setAnimateWaves } = useAnimateWaves();
+  const [currentPage, setCurrentPage] = useState<"Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame">("Home");
   const [hasFoundMatch, setHasFoundMatch] = useState<boolean>(false);
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'Home':
+        return <Home setCurrentPage={setCurrentPage} />;
+      case 'PreGame':
+        return <PreGame setCurrentPage={setCurrentPage} />;
+      case 'SinglePlayerGame':
+        return <SinglePlayerGame setCurrentPage={setCurrentPage} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />;
+      //case 'MultiPlayerGame':
+      //  return <MultiPlayerGame />;
+      default:
+        return <div>Page not found</div>;
+    }
+  };
   useEffect(() => {
     // for switching component effect
     setTimeout(() => {
@@ -24,8 +35,7 @@ export default function Page() {
     }, 1000);
   }, [animateWaves]);
   return (
-    <AppProvider>
-    <main className={`relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 transition-colors duration-500 ease-in-out ${hasFoundMatch?" bg-gradient-to-bl from-yellow-800 via-yellow-600 to-yellow-800":"bg-gradient-to-bl from-slate-800 via-purple-900 to-slate-800"}`}>{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
+    <main className={`relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 transition-colors duration-500 ease-in-out bg-gradient-base ${hasFoundMatch && "bg-gradient-success"}`}>{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
       {/** 
       <img src="/wave.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       <img src="/wave2.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
@@ -49,13 +59,8 @@ export default function Page() {
           <img src="/wave.svg" className={`absolute h-full w-full object-cover top-0 transform scale-x-[120%] -translate-x-4 md:-translate-x-20 transition ease-in-out duration-500 opacity-[50%]`} alt="Wave Background 2" />
         </div>
       </div>
-      {!showPreGame &&
-        <Home animateWaves={animateWaves} setAnimateWaves={setAnimateWaves} setShowPreGame={setShowPreGame} />
-      }
-      {showGame && <Game hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />}
-      {showPreGame && <PreGame />}
+      {renderPage()}
       <FloatingNumbers hasFoundMatch={hasFoundMatch} />
     </main>
-    </AppProvider>
   );
 }

@@ -38,9 +38,50 @@
   background-size: 0 0.1em, 100% 0.1em;
 }
 
+@property --myColor1 {
+  syntax: '<color>';
+  initial-value: rgb(30 41 59);
+  inherits: false;
+}
 
+@property --myColor2 {
+  syntax: '<color>';
+  initial-value: rgb(88 28 135);
+  inherits: false;
+}
 
+@property --myColor3 {
+  syntax: '<color>';
+  initial-value: rgb(30 41 59);
+  inherits: false;
+}
+.bg-gradient-base {
+  background: linear-gradient(to left bottom, var(--myColor1), var(--myColor2), var(--myColor3));
+  transition: --myColor1 500ms, --myColor2 500ms, --myColor3 500ms;
+}
 
+.bg-gradient-success {
+  --myColor1: rgb(133 77 14);
+  --myColor2: rgb(202 138 4);
+  --myColor3: rgb(133 77 14);
+}
+
+.animate-gradient{  
+    background: -webkit-linear-gradient(#C7D3DC,#5B798E);  
+    background: -moz-linear-gradient(#C7D3DC,#5B798E);  
+    background: -o-linear-gradient(#C7D3DC,#5B798E);  
+    background: linear-gradient(#C7D3DC,#5B798E);  
+  
+    -webkit-transition: background 1s ease-out;  
+    -moz-transition: background 1s ease-out;  
+    -o-transition: background 1s ease-out;  
+    transition: background 1s ease-out;  
+  
+    background-size:1px 200px;  
+}  
+.animate-gradient:hover{  
+    background-position:100px;  
+}  
 .folded-corner {
   background: linear-gradient(-55.8deg,  rgb(203 213 225) 10.3em, rgb(30 41 59) 0) no-repeat;
 }

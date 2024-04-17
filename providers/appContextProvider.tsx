@@ -4,6 +4,12 @@ import {
   getDefaultConfig,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import {
+  rainbowWallet,
+  metaMaskWallet,
+  coinbaseWallet
+} from '@rainbow-me/rainbowkit/wallets';
 import { WagmiProvider } from 'wagmi';
 import {
   klaytnBaobab
@@ -23,7 +29,6 @@ import {
 } from "react";
 
 import { useToast } from '@/components/ui/use-toast';
-import { useConfig } from 'wagmi';
 interface ContextProps {
   authStatus: AuthenticationStatus;
   setAuthStatus: any;
@@ -35,10 +40,15 @@ const AppContext = createContext<ContextProps>({
 });
 
 const wagmiConfig = getDefaultConfig({
+  wallets: [{
+    groupName: 'Recommended',
+    wallets: [rainbowWallet, metaMaskWallet, coinbaseWallet],
+  }],
   appName: 'guessnum',
   projectId: 'YOUR_PROJECT_ID',
   chains: [klaytnBaobab],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  ssr: true,
+
 });
 const queryClient = new QueryClient();
 export default function AppProvider({
