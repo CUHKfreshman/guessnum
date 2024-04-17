@@ -22,6 +22,7 @@ contract GuessNumberGame {
         bool isGameInProgress;
         uint256 winningNumber1;
         uint256 winningNumber2;
+        address starter;
     }
 
     mapping(uint256 => Game) public games;
@@ -68,7 +69,8 @@ contract GuessNumberGame {
             winner: address(0),
             isGameInProgress: true,
             winningNumber1: winningNumber1,
-            winningNumber2: winningNumber2
+            winningNumber2: winningNumber2,
+            starter: address(0)
         });
         nextGameNumber++;
     }
@@ -86,17 +88,24 @@ contract GuessNumberGame {
         require(game.isGameInProgress, "Game is not in progress");
 
         // 确保猜测者是游戏的一部分
-        require(msg.sender == game.player1 || msg.sender == game.player2, "Sender is not part of the game");
+        require(player1 == game.player1 || player1 == game.player2, "Sender is not part of the game");
 
         // 确保玩家还未猜过
-        require(!hasGuessed[gameNumber][msg.sender], "Player has already guessed");
+        require(!hasGuessed[gameNumber][player1], "Player has already guessed");
 
         // 确保猜测在有效范围内
         require(guess >= 1 && guess <= 10, "Guess is out of range");
 
+        if(game.roundNumber == 1 && game.turnNumber == 0 && !hasGuessed[gameNumber][player2]) {
+            game.starter = player1;
+        }
+
+        if(game.roundNumber == 2 && game.turnNumber == 0 && !hasGuessed[gameNumber][player2]) {
+            require(game.starter != player1, "You can't first guess twice ");
+        }
+
         // 标记玩家已经猜过
         hasGuessed[gameNumber][msg.sender] = true;
-
 
         // 处理玩家猜测
         if (game.roundNumber == 1 && guess == game.winningNumber1) {
