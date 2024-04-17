@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract RandomMatchmaking {
     IKIP7 public token;
     uint256 public constant stakeAmount = 20; // stake amount per player
-    uint256 public constant tokenAmount = 10**16; // 
+    uint256 public constant tokenAmount = 10; // 
     uint256 public constant roomTimeout = 10 seconds; // max waiting time before timeout
     uint256 public constant maxNumber = 10; // number range is from 1 to 10
 
