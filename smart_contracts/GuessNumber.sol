@@ -149,7 +149,7 @@ contract GuessNumberGame {
         // 如果没有猜对，并且另一位玩家还没猜过，保持轮数和猜测状态不变
     }
 
-    // 重置房间
+    // 重置游戏
     function resetGame(uint256 gameNumber) public  {
         Game storage game = games[gameNumber];
         require(game.isGameInProgress, "Game is not in progress");
@@ -189,6 +189,52 @@ contract GuessNumberGame {
         }
         return (platformFee, playerFee);
     }
+
+    function quitGame() external {
+        uint256 platformFee;
+        uint256 playerFee;
+        // 确定赢家和输家
+        address loser = msg.sender;
+        (uint gameNumber, address winner) = getPlayerGameNumber(loser);
+        Game storage game = games[gameNumber];
+        require(game.isGameInProgress, "Game is not in progress");
+
+        // 确保调用者是游戏的一部分
+        require(msg.sender == game.player1 || msg.sender == game.player2, "Sender is not part of the game");
+
+        // 根据当前局数计算当前费用
+        uint256 currentFee;
+        if (game.turnNumber <= 3) {
+            currentFee = 1;
+        } else if (game.turnNumber <= 6) {
+            currentFee = 2;
+        } else {
+            currentFee = 3;
+        }
+
+        // 计算平台费用和玩家费用
+        if (game.roundNumber == 1) {
+            platformFee = game.platformFee + currentFee + gameFee;
+        } else if (game.roundNumber == 2) {
+            platformFee = game.platformFee + currentFee;
+        }
+        playerFee = game.totalPool - platformFee;
+
+        // 更新游戏状态
+        game.winner = winner;
+        game.isGameInProgress = false;
+        uint256 roomNumber = game.roomNumber;
+
+        // 结算游戏
+        matchmaking.settleGame(gameNumber, winner, playerFee, owner, platformFee);
+
+        // 删除游戏
+        resetGame(gameNumber);
+
+        // 删除房间
+        matchmaking.resetRoom(roomNumber);
+    }
+
 
 
     function getPlayerGameNumber(address player1) public view returns (uint256, address) {
