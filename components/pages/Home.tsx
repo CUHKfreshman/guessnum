@@ -1,18 +1,18 @@
-"use client"
+'use client';
 import { ReactTyped } from "react-typed";
 import { useEffect, useState } from "react";
 interface HomeProps {
     animateWaves: boolean;
     setAnimateWaves: (value: boolean) => void;
-    setShowGame: (value: boolean) => void;
+    setShowPreGame: (value: boolean) => void;
 }
-export default function Home({animateWaves, setAnimateWaves, setShowGame}: HomeProps) {
+export default function Home({animateWaves, setAnimateWaves, setShowPreGame}: HomeProps) {
     const handleClicked = () => {
         setAnimateWaves(!animateWaves);
         // for switching component effect
         setTimeout(() => {
                 setAnimateWaves(false);
-                setShowGame(true);
+                setShowPreGame(true);
                 console.log("Switching to Game Component");
             
         }, 1000);

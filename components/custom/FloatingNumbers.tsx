@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useEffect, useState } from "react";
 let numberId = 0; // unique identifier
@@ -6,7 +6,7 @@ interface NumberProps {
     hasFoundMatch: boolean;
 }
 export default function FloatingNumbers({ hasFoundMatch }: NumberProps) {
-    const [numbers, setNumbers] = useState<{ id: number; value: number; left: number; duration: number }[]>([]);
+    const [numbers, setNumbers] = useState<{ id: number; value: number; left: number; duration: number; size: number }[]>([]);
 
     useEffect(() => {
         console.log('hasFoundMatch:', hasFoundMatch);
@@ -17,6 +17,7 @@ export default function FloatingNumbers({ hasFoundMatch }: NumberProps) {
                 value: Math.floor(Math.random() * 10),
                 left: Math.floor(Math.random() * 100),
                 duration: Math.max(Math.floor(Math.random() * 10), 5),
+                size: Math.min(Math.floor(Math.random() * 2), 1.5),
             };
             numberId %= 1000;
             
@@ -41,13 +42,14 @@ export default function FloatingNumbers({ hasFoundMatch }: NumberProps) {
     }, []);
     return (
         <>
-            {numbers.map(({ id, value, left, duration }) => (
+            {numbers.map(({ id, value, left, duration, size }) => (
                 <div
                     key={id}
                     className={`${hasFoundMatch?"text-yellow-400":"text-slate-400"} fixed top-0 z-[1]`}
                     style={{
                         left: `${left}%`,
                         animation: `float ${duration}s ease-in forwards`,
+                        fontSize: `${size}rem`,
                     }}
                 >
                     {value}

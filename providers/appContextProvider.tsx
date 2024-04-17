@@ -1,97 +1,91 @@
-"use client";
-
-import { AuthenticationStatus } from "@rainbow-me/rainbowkit";
+'use client';
+import '@rainbow-me/rainbowkit/styles.css';
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
+import {
+  klaytnBaobab
+} from 'wagmi/chains';
+import {
+  QueryClientProvider,
+  QueryClient,
+} from "@tanstack/react-query";
+import type { AuthenticationStatus } from "@rainbow-me/rainbowkit";
 import {
   createContext,
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
+import { useToast } from '@/components/ui/use-toast';
+import { useConfig } from 'wagmi';
 interface ContextProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: Dispatch<SetStateAction<boolean>>;
-  headerTitle: string;
-  setHeaderTitle: Dispatch<SetStateAction<string>>;
-  modalLogin: boolean;
-  setModalLogin: Dispatch<SetStateAction<boolean>>;
-  modalTopUp: boolean;
-  setModalTopUp: Dispatch<SetStateAction<boolean>>;
-  topUpStatus: string;
-  setTopUpStatus: Dispatch<SetStateAction<string>>;
-  modalTopUpSuccessful: boolean;
-  setModalTopUpSuccessful: Dispatch<SetStateAction<boolean>>;
-  modalTopUpFailed: boolean;
-  setModalTopUpFailed: Dispatch<SetStateAction<boolean>>;
-  toast: any;
-  setToast: Dispatch<SetStateAction<any>>;
-  verifStatus: AuthenticationStatus;
-  setVerifStatus: any;
+  authStatus: AuthenticationStatus;
+  setAuthStatus: any;
 }
 
 const AppContext = createContext<ContextProps>({
-  sidebarOpen: false,
-  setSidebarOpen: (): boolean => false,
-  headerTitle: "",
-  setHeaderTitle: (): string => "",
-  modalLogin: false,
-  setModalLogin: (): boolean => false,
-  modalTopUp: false,
-  setModalTopUp: (): boolean => false,
-  topUpStatus: "UNDEFINED",
-  setTopUpStatus: () => "UNDEFINED",
-  modalTopUpSuccessful: false,
-  setModalTopUpSuccessful: () => false,
-  modalTopUpFailed: false,
-  setModalTopUpFailed: () => false,
-  toast: {},
-  setToast: () => {},
-  verifStatus: "unauthenticated",
-  setVerifStatus: () => "unauthenticated",
+  authStatus: "unauthenticated",
+  setAuthStatus: () => "unauthenticated",
 });
 
+const wagmiConfig = getDefaultConfig({
+  appName: 'guessnum',
+  projectId: 'YOUR_PROJECT_ID',
+  chains: [klaytnBaobab],
+  ssr: true, // If your dApp uses server side rendering (SSR)
+});
+const queryClient = new QueryClient();
 export default function AppProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [headerTitle, setHeaderTitle] = useState("");
-  const [modalLogin, setModalLogin] = useState(false);
-  const [modalTopUp, setModalTopUp] = useState(false);
-  const [topUpStatus, setTopUpStatus] = useState("UNDEFINED");
-  const [modalTopUpSuccessful, setModalTopUpSuccessful] = useState(false);
-  const [modalTopUpFailed, setModalTopUpFailed] = useState(false);
-  const [toast, setToast] = useState(false);
-  const [verifStatus, setVerifStatus] =
-    useState<AuthenticationStatus>("unauthenticated");
+  const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("unauthenticated");
+  const { toast } = useToast();
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      toast({
+        title: "Please connect your wallet",
+        description: "You need to connect your wallet to play the game",
+      });
+    }
+    else if (authStatus === "authenticated") {
+      toast({
+        title: "Wallet connected",
+        description: "You can now play the game",
+      });
+    }
+    else if (authStatus === "loading") {
+      toast({
+        title: "Wallet loading",
+        description: "Connecting to the wallet...",
+      });
+    }
+  }, [authStatus]);
   return (
-    <AppContext.Provider
-      value={{
-        sidebarOpen,
-        setSidebarOpen,
-        headerTitle,
-        setHeaderTitle,
-        modalLogin,
-        setModalLogin,
-        modalTopUp,
-        setModalTopUp,
-        topUpStatus,
-        setTopUpStatus,
-        modalTopUpSuccessful,
-        setModalTopUpSuccessful,
-        modalTopUpFailed,
-        setModalTopUpFailed,
-        toast,
-        setToast,
-        verifStatus,
-        setVerifStatus,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider
+          coolMode={true}
+        >
+          <AppContext.Provider
+            value={{
+              authStatus,
+              setAuthStatus,
+            }}
+          >
+            {children}
+          </AppContext.Provider>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 

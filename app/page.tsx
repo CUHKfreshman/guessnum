@@ -1,14 +1,18 @@
-"use client"
+'use client';
 import Image from "next/image";
 import { ReactTyped } from "react-typed";
 import FloatingNumbers from "@/components/custom/FloatingNumbers";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { useConfig } from "wagmi";
 import Home from "@/components/pages/Home";
 import Game from "@/components/pages/Game";
+import PreGame from "@/components/pages/PreGame";
+import AppProvider from "@/providers/appContextProvider";
+import WalletButton from "@/components/custom/WalletButton";
 export default function Page() {
   const [animateWaves, setAnimateWaves] = useState(false);
+  const [showPreGame, setShowPreGame] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [hasFoundMatch, setHasFoundMatch] = useState<boolean>(false);
   useEffect(() => {
@@ -20,17 +24,17 @@ export default function Page() {
     }, 1000);
   }, [animateWaves]);
   return (
+    <AppProvider>
     <main className={`relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 transition-colors duration-500 ease-in-out ${hasFoundMatch?" bg-gradient-to-bl from-yellow-800 via-yellow-600 to-yellow-800":"bg-gradient-to-bl from-slate-800 via-purple-900 to-slate-800"}`}>{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
       {/** 
       <img src="/wave.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       <img src="/wave2.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       */}
       <div className="fixed left-0 top-0 w-full h-20 z-[999]">
-        <div className="flex items-center justify-between h-full px-8">
-          <div className="text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch?"text-orange-500":"text-sky-500"}`}>NUM</span></div>
-          <div className="flex items-center gap-4 select-none">
-            <button className={`btn btn-secondary bg-clip-text text-transparent font-semibold transition-all duration-500 ease-in-out ${hasFoundMatch?"from-orange-500 via-yellow-600 to-orange-500 bg-gradient-to-r":"from-purple-500 via-violet-500 to-violet-500 bg-gradient-to-r"}`}>Subscribe</button>
-            <button className={`btn btn-secondary bg-clip-text text-transparent font-semibold transition-all duration-500 ease-in-out ${hasFoundMatch?"from-orange-500 via-yellow-600 to-orange-500 bg-gradient-to-r":"from-violet-500 via-violet-600 to-indigo-500 bg-gradient-to-r"}`}>Settings</button>
+        <div className="flex items-center justify-between h-full px-4">
+          <div className="mb-4 text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch?"text-orange-500":"text-sky-500"}`}>NUM</span></div>
+          <div className="mb-4 flex items-center gap-4 select-none">
+            <WalletButton />
           </div>
         </div>
       </div>
@@ -45,12 +49,13 @@ export default function Page() {
           <img src="/wave.svg" className={`absolute h-full w-full object-cover top-0 transform scale-x-[120%] -translate-x-4 md:-translate-x-20 transition ease-in-out duration-500 opacity-[50%]`} alt="Wave Background 2" />
         </div>
       </div>
-      {!showGame &&
-        <Home animateWaves={animateWaves} setAnimateWaves={setAnimateWaves} setShowGame={setShowGame} />
+      {!showPreGame &&
+        <Home animateWaves={animateWaves} setAnimateWaves={setAnimateWaves} setShowPreGame={setShowPreGame} />
       }
       {showGame && <Game hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />}
-
+      {showPreGame && <PreGame />}
       <FloatingNumbers hasFoundMatch={hasFoundMatch} />
     </main>
+    </AppProvider>
   );
 }

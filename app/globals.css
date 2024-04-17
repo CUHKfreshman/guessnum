@@ -21,6 +21,26 @@
 .font-raleway {
     font-family: 'Raleway', sans-serif;
 }
+
+.animated-underline {
+  background: 
+    linear-gradient(to right, transparent, transparent),
+    linear-gradient(to left, rgb(123, 0, 255), rgb(174, 61, 255), rgb(200, 0, 200));
+  background-size: 100% 0.1em, 0 0.1em;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.animated-underline:hover,
+.animated-underline:focus,
+.animated-underline:visited,
+.persistent-underline {
+  background-size: 0 0.1em, 100% 0.1em;
+}
+
+
+
+
 .folded-corner {
   background: linear-gradient(-55.8deg,  rgb(203 213 225) 10.3em, rgb(30 41 59) 0) no-repeat;
 }

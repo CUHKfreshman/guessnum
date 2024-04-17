@@ -1,3 +1,4 @@
+'use client';
 const fetchGuessResult_template = async () => {
     try {
         const response = await fetch('/api/getNum');

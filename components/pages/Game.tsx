@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { MouseEvent, useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import fetchGuessResult from '@/services/gameApi';
