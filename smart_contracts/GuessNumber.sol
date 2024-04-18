@@ -2,13 +2,36 @@
 pragma solidity ^0.8.25;
 
 import "./RandomMatchmaking.sol";  // 引入RandomMatchmaking合约
-import "Guess Number/IERC20.sol";
+import "./IERC20.sol";
 
+// ERC20:
+// 1. view balance
+// 2.mint(amount)
+// Single Player
+// 1. check game status =>return (boolean, int)(游戏是否完结，奖池剩余金额)view function,
+// 2. send guess(number)
+// 送guess去游戏
+// 3. is in game
+// 看是否在单人游戏中view function
+// 4. join game
+// 加入单人游戏
+// 5. remaining time
+// 这局游戏还剩多少时间
+// Multi Player
+// 1. check game status =>return (boolean, boolean, int, int)view function，三个返回值(是否是我的回合，游戏是否结束，奖池剩余金额，第几回合)
+// 2. is in game
+// 3. join game
+// 4. remaining time
+// 5. send guess
+
+
+// multiple inheritance
 contract GuessNumberGame {
     RandomMatchmaking public matchmaking;  // RandomMatchmaking合约的引用
     address public owner; // 合约的所有者地址
-    uint256 public constant stakeAmount = 20; // 每个玩家的赌注数量
+    uint256 public constant stakeAmount = 20; // 每个玩家的赌注数量, 也是每局游戏的赌注
     uint256 public gameFee = 1;  // 游戏启动费，每局1个token
+
 
     struct Game {
         uint256 roomNumber;
@@ -23,16 +46,19 @@ contract GuessNumberGame {
         uint256 winningNumber1;
         uint256 winningNumber2;
         address starter;
+        uint256 startTime;
     }
 
     mapping(uint256 => Game) public games;
     uint256 public nextGameNumber = 1;
     // 外部映射来跟踪玩家是否已经猜过
     mapping(uint256 => mapping(address => bool)) public hasGuessed;
+    // 两局游戏，回合数从0开始，第一局回合数是偶数，是player1的回合，奇数是player2的回合，player1先手，第二局回合数是奇数，是player2的回合，偶数是player1的回合，player2先手
 
     event GameStarted(uint256 roomNumber, address indexed player1,  address indexed player2);
-    event GameEnded(uint256 gameNumber, address indexed winner, uint256 winnings);
-    event GameFinished(uint256 gameNumber, uint256 roomNumber);
+    event OneGameEnded(uint256 gameNumber, address indexed winner, uint256 winnings); // 一局游戏结束的事件
+    event GameFinished(uint256 gameNumber, uint256 roomNumber); // 一次游戏，两局都结束的事件
+    event NumberGuessed(uint256 indexed gameID, address indexed player, uint256 number); // 玩家猜测数字的事件
 
     constructor(address _matchmakingAddress) {
         matchmaking = RandomMatchmaking(_matchmakingAddress);  // 初始化引用
@@ -57,7 +83,7 @@ contract GuessNumberGame {
 
     // 创建一个新的游戏
     function createGame(uint256 roomNumber, address player1, address player2, uint256 winningNumber1, uint256 winningNumber2) public {
-        uint256 totalPool = stakeAmount * 2 ;
+        uint256 totalPool = stakeAmount;
         games[nextGameNumber] = Game({
             roomNumber: roomNumber,
             player1: player1,
@@ -70,9 +96,25 @@ contract GuessNumberGame {
             isGameInProgress: true,
             winningNumber1: winningNumber1,
             winningNumber2: winningNumber2,
-            starter: address(0)
+            starter: address(0),
+            startTime: block.timestamp
         });
         nextGameNumber++;
+    }
+
+    // check game status, call by player
+    function checkGameStatus() public view returns (bool, bool, uint256, uint256) {
+        address player1 = msg.sender;
+        (uint256 gameNumber, address player2) = getPlayerGameNumber(player1);
+        require(gameNumber != 0, "Player is not in any game");
+
+        Game storage game = games[gameNumber];
+
+        bool isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
+        bool isGameEnded = !game.isGameInProgress;
+        uint256 remainingPool = game.totalPool;
+        uint256 roundNumber = game.turnNumber / 2 + 1; // 两个玩家轮流猜过视为一轮
+        return (isMyTurn, isGameEnded, remainingPool, roundNumber);
     }
     
     function guessNumber(uint256 guess) external {
@@ -81,81 +123,70 @@ contract GuessNumberGame {
         (uint256 gameNumber, address player2) = getPlayerGameNumber(player1);
         require(gameNumber != 0, "Player is not in any game");
 
-            // 获取游戏信息
+        // 获取游戏信息
         Game storage game = games[gameNumber];
 
+        // 获取游戏状态
+        (bool isMyTurn, bool isGameOver, uint256 remainingPool, uint256 roundNumber) = checkGameStatus();
+
         // 确保游戏正在进行中
-        require(game.isGameInProgress, "Game is not in progress");
+        require(!isGameOver, "Game is not in progress");
 
-        // 确保猜测者是游戏的一部分
-        require(player1 == game.player1 || player1 == game.player2, "Sender is not part of the game");
+        // 确保猜测者是当前回合的玩家
+        require(isMyTurn, "It's not your turn");
 
-        // 确保玩家还未猜过
-        require(!hasGuessed[gameNumber][player1], "Player has already guessed");
 
         // 确保猜测在有效范围内
         require(guess >= 1 && guess <= 10, "Guess is out of range");
 
-        if(game.roundNumber == 1 && game.turnNumber == 0 && !hasGuessed[gameNumber][player2]) {
-            game.starter = player1;
-        }
-
-        if(game.roundNumber == 2 && game.turnNumber == 0 && !hasGuessed[gameNumber][player2]) {
-            require(game.starter != player1, "You can't first guess twice ");
-        }
-
         // 标记玩家已经猜过
         hasGuessed[gameNumber][msg.sender] = true;
 
+        // 触发玩家猜测数字的事件
+        emit NumberGuessed(gameNumber, player1, guess);
+
         // 处理玩家猜测
-        if (game.roundNumber == 1 && guess == game.winningNumber1) {
+        if ((roundNumber == 1 && guess == game.winningNumber1) || (roundNumber == 2 && guess == game.winningNumber2)) {
             // 处理正确猜测的逻辑
-            game.winner = msg.sender;
-            // 计算奖金和平台费用
-            (uint256 winnings, uint256 platformFee) = calculateWinnings(game.totalPool);
-
-            // 结算游戏
-            matchmaking.settleGame(game.roomNumber, game.winner, winnings, owner, platformFee);
-
-            // 游戏局数清零，轮数加一
-            game.roundNumber = 2;
-            game.turnNumber = 0;
-
-            // 触发游戏结束事件
-            emit GameEnded(gameNumber, msg.sender, winnings);
-        } 
-        else if (game.roundNumber == 2 && guess == game.winningNumber2) {
-            // 处理正确猜测的逻辑
-            game.winner = msg.sender;
+            game.winner = player1;
             // 计算奖金和平台费用
             (uint256 winnings, uint256 platformFee) = calculateWinnings(gameNumber);
+            game.platformFee = platformFee;
+            game.totalPool = winnings;
 
             // 结算游戏
             matchmaking.settleGame(game.roomNumber, game.winner, winnings, owner, platformFee);
+    
+            // 如果是第一局，增加轮数并重置玩家的猜测状态
+            if (roundNumber == 1) {
+                game.roundNumber++;
+                game.turnNumber = 0;
 
-            // 触发游戏结束事件
-            emit GameEnded(gameNumber, msg.sender, winnings);
+                game.platformFee = gameFee;
+                game.totalPool = stakeAmount;
+                
+                emit OneGameEnded(gameNumber, msg.sender, winnings);
+            } else {
+                // 如果是第二局，结束游戏
+                game.isGameInProgress = false;
+                // 重置游戏
+                uint roomNumber = game.roomNumber;
+                resetGame(gameNumber);
+                matchmaking.resetRoom(roomNumber);
+                
+                emit OneGameEnded(gameNumber, msg.sender, winnings);
+                emit GameFinished(gameNumber, roomNumber);
+            }
 
-            // 游戏停止进行
-            game.isGameInProgress = true;
-
-            // 重置游戏
-            uint roomNumber = game.roomNumber;
-            resetGame(gameNumber);
-            matchmaking.resetRoom(roomNumber);
-
-            // 触发游戏结算事件
-            emit GameFinished(gameNumber, roomNumber);
-
-        }
-        if (hasGuessed[gameNumber][player2]) {
-            // 如果另一位玩家已经猜过，增加轮数
+        } else {
+            // 如果没有猜中，增加轮数
             game.turnNumber++;
-            // 重置玩家的猜测状态
-            hasGuessed[gameNumber][player1] = false;
-            hasGuessed[gameNumber][player2] = false;
+
+            // 计算平台费用
+            (uint256 winnings, uint256 platformFee) = calculateWinnings(gameNumber);
+            game.platformFee = platformFee;
+            game.totalPool = winnings;
         }
-        // 如果没有猜对，并且另一位玩家还没猜过，保持轮数和猜测状态不变
     }
 
     // 重置游戏
@@ -167,35 +198,25 @@ contract GuessNumberGame {
         delete games[gameNumber];
     }
 
-    function calculateWinnings(uint256 gameNumber) public  returns (uint256 platformFee, uint256 playerFee) {
+    function calculateWinnings(uint256 gameNumber) public view returns (uint256 platformFee, uint256 playerFee) {
         Game storage game = games[gameNumber];
         require(game.isGameInProgress, "Game is not in progress");
 
         uint256 currentFee;
-        if (game.turnNumber <= 3) {
+        if (game.turnNumber <= 5) {
             currentFee = 1;
-        } else if (game.turnNumber <= 6) {
+        } else if (game.turnNumber <= 11) {
             currentFee = 2;
         } else {
             currentFee = 3;
         }
 
         // 计算平台费用
-        platformFee = game.platformFee + currentFee;
+        platformFee = gameFee + currentFee;
 
         // 计算玩家费用
         playerFee = stakeAmount - platformFee;
 
-        // 更新游戏状态
-        if (game.roundNumber == 1) {
-            // 第一轮游戏，更新游戏的赌池和平台费
-            game.totalPool -= stakeAmount;
-            game.platformFee = 1;
-        } else {
-            // 第二轮游戏，清空赌池和平台费
-            game.totalPool = 0;
-            game.platformFee = 0;
-        }
         return (platformFee, playerFee);
     }
 
@@ -208,26 +229,14 @@ contract GuessNumberGame {
         Game storage game = games[gameNumber];
         require(game.isGameInProgress, "Game is not in progress");
 
-        // 确保调用者是游戏的一部分
-        require(msg.sender == game.player1 || msg.sender == game.player2, "Sender is not part of the game");
-
-        // 根据当前局数计算当前费用
-        uint256 currentFee;
-        if (game.turnNumber <= 3) {
-            currentFee = 1;
-        } else if (game.turnNumber <= 6) {
-            currentFee = 2;
-        } else {
-            currentFee = 3;
-        }
-
         // 计算平台费用和玩家费用
         if (game.roundNumber == 1) {
-            platformFee = game.platformFee + currentFee + gameFee;
+            platformFee = game.platformFee + gameFee;
+            playerFee = game.totalPool + stakeAmount - gameFee;
         } else if (game.roundNumber == 2) {
-            platformFee = game.platformFee + currentFee;
+            platformFee = game.platformFee;
+            playerFee = game.totalPool;
         }
-        playerFee = game.totalPool - platformFee;
 
         // 更新游戏状态
         game.winner = winner;
@@ -236,14 +245,11 @@ contract GuessNumberGame {
 
         // 结算游戏
         matchmaking.settleGame(gameNumber, winner, playerFee, owner, platformFee);
-
         // 删除游戏
         resetGame(gameNumber);
-
         // 删除房间
         matchmaking.resetRoom(roomNumber);
     }
-
 
 
     function getPlayerGameNumber(address player1) public view returns (uint256, address) {
@@ -256,5 +262,27 @@ contract GuessNumberGame {
             }
         }
         return (0, address(0)); // 如果玩家不在任何房间中，则返回 (0, address(0))
+    }
+
+    function isGameTimeout(uint256 gameID) public view returns (bool) {
+        Game storage game = games[gameID];
+
+        // 如果当前时间超过游戏开始时间加上十分钟，那么游戏就超时了
+        return block.timestamp > game.startTime + 10 minutes;
+    }
+
+
+    function remainingTime(uint256 gameID) public view returns (uint256) {
+        Game storage game = games[gameID];
+
+        // 计算游戏剩余的时间
+        uint256 endTime = game.startTime + 10 minutes;
+        if (block.timestamp >= endTime) {
+            // 如果当前时间已经超过游戏的结束时间，那么剩余时间就是0
+            return 0;
+        } else {
+            // 否则，剩余时间就是结束时间减去当前时间
+            return endTime - block.timestamp; // seconds
+        }
     }
 }

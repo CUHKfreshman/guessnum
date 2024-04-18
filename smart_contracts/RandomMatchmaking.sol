@@ -2,7 +2,6 @@
 pragma solidity ^0.8.25;
 
 import "./IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract RandomMatchmaking {
     IERC20 public token;
