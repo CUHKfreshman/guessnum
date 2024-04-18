@@ -48,7 +48,6 @@ const wagmiConfig = getDefaultConfig({
   projectId: 'YOUR_PROJECT_ID',
   chains: [klaytnBaobab],
   ssr: true,
-
 });
 const queryClient = new QueryClient();
 export default function AppProvider({

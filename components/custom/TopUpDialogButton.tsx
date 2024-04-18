@@ -13,35 +13,65 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppProvider } from "@/providers/appContextProvider";
 import { useAccount, useBalance } from "wagmi";
-import { useViewBalance, useMint } from "@/hooks/gameHooks";
-import { useState } from "react";
+import { useReadGncBalanceOf, useWriteGncBuy } from "@/hooks/generated";
+import { useEffect, useState } from "react";
 import { useToast } from "../ui/use-toast";
-interface TopUpButtonProps {
+import { useWaitForTransactionReceipt } from "wagmi";
+interface TopUpDialogButtonProps {
   gameStatus: "InSinglePlayerGame" | "InMultiPlayerGame" | "NotInGame" | "StartingSinglePlayerGame" | "StartingMultiPlayerGame";
 }
-export default function TopUpButton({ gameStatus }: TopUpButtonProps) {
+export default function TopUpDialogButton({ gameStatus }: TopUpDialogButtonProps) {
   const {address} = useAccount();
-  const balance = useViewBalance(address);
-  const mint = useMint(address);
+  const {data:balance} = useReadGncBalanceOf({account:address, args:[address as `0x${string}`]});
+  const {data:buyHash, isSuccess: isBuySent, writeContract} = useWriteGncBuy();
   const [mintTokenNumber, setMintTokenNumber] = useState(0);
   const { authStatus } = useAppProvider();
   const { toast } = useToast();
+  const { isLoading: isBuyConfirming, isSuccess: isBuyConfirmed } = 
+    useWaitForTransactionReceipt({ 
+      hash: buyHash, 
+    }) 
   const handleTopUp = () => {
-    if(mintTokenNumber <= 0) {
+    if(address === undefined) {
       toast({
-        title: "Invalid Top Up",
-        description: "Please enter a valid number of tokens to top up",
+        title: "Invalid Address",
+        description: "Please connect your wallet to top up.",
         variant:"destructive"
       });
       return;
     }
-    mint(mintTokenNumber);
+    if(mintTokenNumber <= 0) {
+      toast({
+        title: "Invalid Top Up",
+        description: "Please enter a valid number of tokens to top up.",
+        variant:"destructive"
+      });
+      return;
+    }
+    writeContract({account:address, args:[address, BigInt(mintTokenNumber)]})
     toast({
-      title: "Top Up Success",
-      description: `You have successfully topped up ${mintTokenNumber} tokens!`,
-      variant:"success"
+      title: "Top Up In Progress",
+      description: `Waiting for transaction to be confirmed...`,
     });
   }
+  useEffect(() => {
+    if(isBuySent) {
+      toast({
+        title: "Top Up Success",
+        description: `You have successfully topped up ${mintTokenNumber} tokens!`,
+        variant:"success"
+      });
+      setMintTokenNumber(0);
+    }
+  }, [isBuySent]);
+  useEffect(() => {
+    if(isBuyConfirmed) {
+      toast({
+        title: "Transaction Confirmed",
+        description: `Previsou top up has been confirmed in the blockchain.`,
+      });
+    }
+  }, [isBuyConfirmed]);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -68,7 +98,7 @@ export default function TopUpButton({ gameStatus }: TopUpButtonProps) {
             </Label>
             <Input
               id="remaining-tokens"
-              defaultValue={balance}
+              defaultValue={balance?.toString() ?? 0}
               className="col-span-3"
               disabled={true}
             />

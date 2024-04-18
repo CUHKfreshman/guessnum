@@ -11,7 +11,8 @@ export default function Home({setCurrentPage}: HomeProps) {
         setAnimateWaves(true);
         // for switching component effect
         setTimeout(() => {
-                setCurrentPage("PreGame");
+            setAnimateWaves(false);
+            setCurrentPage("PreGame");
         }, 1000);
     }
     return (

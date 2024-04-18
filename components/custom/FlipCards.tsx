@@ -1,26 +1,25 @@
 'use client';
-import { MouseEvent, useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
+import { MouseEvent, useEffect, useState, useRef, Dispatch, SetStateAction, MutableRefObject } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { fetchGuessResult } from '@/apis/gameApi';
-import { useCheckGameStatus, useSendGuess } from "@/hooks/gameHooks";
 import { useToast } from "../ui/use-toast";
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
 interface FlipCardsProps {
-    hasFoundMatch: "Client" | "Opponent" | null;
-    setHasFoundMatch: (value: "Client" | "Opponent" | null) => void;
+    hasFoundMatch: "Client" | "Opponent" | false;
+    setHasFoundMatch: (value: "Client" | "Opponent" | false) => void;
     flippedCards: { [key: number]: boolean };
     setFlippedCards: Dispatch<SetStateAction<{ [key: number]: boolean }>>;
     guessResults: { [key: number]: boolean | null };
     setGuessResults: Dispatch<SetStateAction<{ [key: number]: boolean | null }>>;
+    isFetchingRef: MutableRefObject<boolean>;
+    handleSendGuess: (index: number) => void;
+    setLastClickedIndex: Dispatch<SetStateAction<number>>;
     isMyTurn?: boolean;
     setIsMyTurn?: Dispatch<SetStateAction<boolean>>;
 }
-export default function FlipCards({ hasFoundMatch, setHasFoundMatch, guessResults, setGuessResults, flippedCards, setFlippedCards, isMyTurn, setIsMyTurn }: FlipCardsProps) {
+export default function FlipCards({ hasFoundMatch, setHasFoundMatch, handleSendGuess, guessResults, setGuessResults, flippedCards, setFlippedCards, isMyTurn, setIsMyTurn, isFetchingRef,setLastClickedIndex }: FlipCardsProps) {
 
     const [remainingStake, setRemainingStake] = useState<number>(20);
-    const [isFetching, setIsFetching] = useState(false);
-    const isFetchingRef = useRef(isFetching);
-    const { guessedNumbers, gameEnded, prizePool } = useCheckGameStatus({ gameType: "SinglePlayerGame" });
     const {gameStatus} = useGameStatusProvider();
     const {toast} = useToast();
     // useEffect(() => {
@@ -86,6 +85,7 @@ export default function FlipCards({ hasFoundMatch, setHasFoundMatch, guessResult
         const rotateY = currentRotateYRegArr ? (parseInt(currentRotateYRegArr[1]) > 0 ? -180 : 180) : 180;
         card.style.transform = `rotateY(${rotateY}deg)`;
         // Toggle the flipped status for the card that was clicked
+        setLastClickedIndex(index);
         setFlippedCards(prevFlippedCards => ({
             ...prevFlippedCards,
             [index]: true
@@ -94,24 +94,24 @@ export default function FlipCards({ hasFoundMatch, setHasFoundMatch, guessResult
             ...prevGuessResults,
             [index]: null
         }));
-        isFetchingRef.current = true;
         if (setIsMyTurn !== undefined) {
             setIsMyTurn(false);
         }
-        try {
-            const result = await fetchGuessResult();
-            setHasFoundMatch(result? "Client" : null);
-            setGuessResults(prevGuessResults => ({
-                ...prevGuessResults,
-                [index]: result
-            }));
+        handleSendGuess(index);
+        // try {
+        //     const result = await fetchGuessResult();
+        //     setHasFoundMatch(result? "Client" : null);
+        //     setGuessResults(prevGuessResults => ({
+        //         ...prevGuessResults,
+        //         [index]: result
+        //     }));
 
-        } catch (error) {
-            console.error('Error fetching guess result:', error);
-        }
-        finally {
-            isFetchingRef.current = false;
-        }
+        // } catch (error) {
+        //     console.error('Error fetching guess result:', error);
+        // }
+        // finally {
+        //     isFetchingRef.current = false;
+        // }
     };
     return (
         <>
@@ -127,7 +127,7 @@ export default function FlipCards({ hasFoundMatch, setHasFoundMatch, guessResult
                     if (Object.keys(guessResults).length === 10 && !hasFoundMatch) {
                         showCard = false;
                     }
-                    if (hasFoundMatch!==null) {
+                    if (hasFoundMatch!==false) {
                         if (guessResult) {
                             showCard = true;
                         }

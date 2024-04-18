@@ -8,8 +8,8 @@ import FlipCards from "@/components/custom/FlipCards"
 import RoundOverlay from "@/components/custom/RoundOverlay"
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
 interface MultiPlayerGameProps {
-    hasFoundMatch: "Client" | "Opponent" | null;
-    setHasFoundMatch: (value: "Client" | "Opponent" | null) => void;
+    hasFoundMatch: "Client" | "Opponent" | false;
+    setHasFoundMatch: (value: "Client" | "Opponent" | false) => void;
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
     handleStartNewGame: (showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null) => void;
 }
@@ -25,6 +25,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     const [roundNumber, setRoundNumber] = useState<number>(1);
     const [title, setTitle] = useState<string>("");
     const [fadeTitle, setFadeTitle] = useState<boolean>(false);
+    const isFetchingRef = useRef<boolean>(false);
     const { gameStatus, setGameStatus } = useGameStatusProvider();
     useEffect(() => {
         if (gameStatus === "InMultiPlayerGame") {
@@ -46,7 +47,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     const handleTryAgain = (tryAgainType: "MultiPlayerGameNextRound" | "MultiPlayerGame") => {
         setFlippedCards({});
         setGuessResults({});
-        setHasFoundMatch(null);
+        setHasFoundMatch(false);
         // reset cards rotate
         const cards = document.querySelectorAll('.flip-card') as NodeListOf<HTMLDivElement>;
         cards.forEach(card => {
@@ -57,10 +58,16 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
             setRoundNumber(1);
         }
     }
+    const handleSendGuess = (index: number) => {
+    
+    }
     const handleBack = () => {
         setAnimateWaves(true);
+        setTimeout(()=>{
+            setAnimateWaves(false);
+        }, 1000);
         setTimeout(() => {
-            setHasFoundMatch(null);
+            setHasFoundMatch(false);
             setGameStatus("NotInGame");
             setCurrentPage('PreGame');
         }, 500);
@@ -100,7 +107,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
                     <h1 className={`${hasFoundMatch === 'Client' ? "text-md md:text-2xl lg:text-4xl text-shadow-success" : "text-2xl md:text-4xl lg:text-7xl"} ${fadeTitle ? "opacity-0" : ""} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
                         {title}
                     </h1>
-                    <FlipCards hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} />
+                    <FlipCards handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} isFetchingRef={isFetchingRef} setIsMyTurn={setIsMyTurn} />
                     <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch && roundNumber >= 2 ? "" : "opacity-[0%] hidden"}`}>
                         <div className="flex flex-col items-center justify-center gap-4">
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"

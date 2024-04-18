@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import GameOptions from '@/components/custom/GameOptions';
-import { useReadGreetingGreet } from '@/hooks/generated';
 import { useAccount } from 'wagmi';
 interface PreGameProps {
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
@@ -10,8 +9,6 @@ interface PreGameProps {
 export default function PreGame({ setCurrentPage, handleStartNewGame }: PreGameProps) {
     const [selectedGame, setSelectedGame] = useState<"SinglePlayerGame" | "MultiPlayerGame" | "SinglePlayerGameCanceled" | "MultiPlayerGameCanceled"  | null>(null);
     const [showOptions, setShowOptions] = useState<"SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null>(null);
-    // const account = useAccount();
-    // const greeting = useReadGreetingGreet({account: account.address});
     const handleSelectGame = (gameType: "SinglePlayerGame" | "MultiPlayerGame") => {
         setSelectedGame(gameType);
         // Wait for the animation to finish before showing options
@@ -19,9 +16,6 @@ export default function PreGame({ setCurrentPage, handleStartNewGame }: PreGameP
             setShowOptions(gameType);
         }, 600);
     };
-    // useEffect(() => {
-    //     console.log(greeting);
-    // }, [greeting]);
     return (
         <div className="h-full w-full flex flex-col items-center justify-center z-50 transition ease-in-out duration-500">
             <div className="flex flex-col md:flex-row items-center justify-center">
@@ -35,7 +29,7 @@ export default function PreGame({ setCurrentPage, handleStartNewGame }: PreGameP
                                 SinglePlayer
                             </button>
                     )}
-                    {((!!showOptions && selectedGame === 'MultiPlayerGame') || selectedGame==="MultiPlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
+                    {((!!showOptions && selectedGame === 'MultiPlayerGame') || selectedGame==="MultiPlayerGameCanceled") && <GameOptions showOptions={showOptions} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
                         </div>
                 </div>
                 <div className={`bg-slate-300 h-40 w-[2px] m-4 hidden md:block transition duration-300 ${selectedGame === 'MultiPlayerGame' ? "rotate-[-60deg]" : "rotate-[60deg]"}`}>
@@ -53,7 +47,7 @@ export default function PreGame({ setCurrentPage, handleStartNewGame }: PreGameP
                             </button>
                         
                     )}
-                    {((!!showOptions && selectedGame === 'SinglePlayerGame') || selectedGame==="SinglePlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
+                    {((!!showOptions && selectedGame === 'SinglePlayerGame') || selectedGame==="SinglePlayerGameCanceled") && <GameOptions showOptions={showOptions} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
                     </div>
                 </div>
             </div>

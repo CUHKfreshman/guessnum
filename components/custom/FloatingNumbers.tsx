@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 let numberId = 0; // unique identifier
 interface NumberProps {
-    hasFoundMatch: "Client" | "Opponent" | null;
+    hasFoundMatch: "Client" | "Opponent" | false;
 }
 export default function FloatingNumbers({ hasFoundMatch }: NumberProps) {
     const [numbers, setNumbers] = useState<{ id: number; value: number; left: number; duration: number; size: number }[]>([]);

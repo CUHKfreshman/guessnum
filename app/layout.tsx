@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import AppProvider from "@/providers/appContextProvider";
 import AnimateWavesProvider from "@/providers/AnimateWavesProvider";
 import GameStatusProvider from "@/providers/GameStatusProvider";
+import ClientContextProvider from "@/providers/ClientContextProvider";
 import "./globals.css";
 
 import { cn } from "@/lib/utils";
@@ -30,12 +31,14 @@ export default function RootLayout({ children }: Readonly<{
         )}
       >
         <AppProvider>
+          <ClientContextProvider>
           <GameStatusProvider>
             <AnimateWavesProvider>
               <Toaster />
               {children}
             </AnimateWavesProvider>
           </GameStatusProvider>
+          </ClientContextProvider>
         </AppProvider>
       </body>
     </html>

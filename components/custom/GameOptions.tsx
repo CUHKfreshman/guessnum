@@ -1,19 +1,18 @@
 'use client';
 import { useState, useContext, useEffect } from 'react';
 import { useAppProvider } from '@/providers/appContextProvider';
-import TopUpButton from '@/components/custom/TopUpButton';
+import TopUpDialogButton from '@/components/custom/TopUpDialogButton';
 import { useAccount } from 'wagmi';
 import { useToast } from '../ui/use-toast';
 import { useGameStatusProvider } from '@/providers/GameStatusProvider';
 // import rainbowkit to get user's balance
-interface SinglePlayerOptionsProps {
-    setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
+interface GameOptionsProps {
     setSelectedGame: (gameType: "SinglePlayerGame" | "MultiPlayerGame" | "SinglePlayerGameCanceled" | "MultiPlayerGameCanceled" | null) => void;
     showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null;
     setShowOptions: (showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null) => void;
     handleStartNewGame: (showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null) => void;
 }
-export default function GameOptions({ showOptions, setCurrentPage, setSelectedGame, setShowOptions, handleStartNewGame }: SinglePlayerOptionsProps) {
+export default function GameOptions({ showOptions, setSelectedGame, setShowOptions, handleStartNewGame }: GameOptionsProps) {
     const { authStatus } = useAppProvider();
     const { address } = useAccount();
     const {gameStatus} = useGameStatusProvider();
@@ -43,7 +42,7 @@ export default function GameOptions({ showOptions, setCurrentPage, setSelectedGa
                 >
                     START
                 </button>
-                <TopUpButton gameStatus={gameStatus} />
+                <TopUpDialogButton gameStatus={gameStatus} />
                 <button
                     className={`w-fit btn uppercase select-none text-lg md:text-3xl mb-8  transition-all duration-300 ease-out ${gameStatus!=="NotInGame"?"text-slate-300/30":authStatus === 'authenticated' ? "animated-underline text-slate-300 [&:not(:hover)]:animate-pulse [&:not(:focus)]:animate-pulse" : "text-slate-300/50 line-through"}`}
                     onClick={handleBack}

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAccount, useConfig } from 'wagmi';
 import { useAppProvider } from '@/providers/appContextProvider';
 import { useToast } from '@/components/ui/use-toast';
-export default function WalletButton() {
+export default function WalletDialogButton() {
   const { setAuthStatus } = useAppProvider();
   const clientAccount = useAccount();
   useEffect(() => {
