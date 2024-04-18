@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
 // import "./RandomMatchmaking.sol";  // 引入RandomMatchmaking合约
 import "./IERC20.sol";
@@ -62,7 +62,7 @@ contract GuessNumberSinglePlayer {
         require(token.transferFrom(owner, address(this), stakeAmount * tokenAmount), "Failed to transfer tokens");
 
         // 生成随机数
-        uint256 winningNumber1 = uint256(keccak256(abi.encodePacked(block.timestamp, block.basefee, seed))) % 10;
+        uint256 winningNumber1 = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, seed))) % 10;
 
         // 创建游戏
         createGame(player1, winningNumber1);
