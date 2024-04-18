@@ -55,9 +55,9 @@ contract GuessNumberGame {
     mapping(uint256 => mapping(address => bool)) public hasGuessed;
     // 两局游戏，回合数从0开始，第一局回合数是偶数，是player1的回合，奇数是player2的回合，player1先手，第二局回合数是奇数，是player2的回合，偶数是player1的回合，player2先手
 
-    event GameStarted(uint256 roomNumber, address indexed player1,  address indexed player2);
-    event OneGameEnded(uint256 gameNumber, address indexed winner, uint256 winnings); // 一局游戏结束的事件
-    event GameFinished(uint256 gameNumber, uint256 roomNumber); // 一次游戏，两局都结束的事件
+    event GameStarted(uint256 indexed roomNumber, address indexed player1,  address indexed player2);
+    event OneGameEnded(uint256 indexed gameNumber, address indexed winner, uint256 winnings); // 一局游戏结束的事件
+    event GameFinished(uint256 indexed gameNumber, uint256 roomNumber); // 一次游戏，两局都结束的事件
     event NumberGuessed(uint256 indexed gameID, address indexed player, uint256 number); // 玩家猜测数字的事件
 
     constructor(address _matchmakingAddress) {
@@ -105,7 +105,7 @@ contract GuessNumberGame {
     // check game status, call by player
     function checkGameStatus() public view returns (bool, bool, uint256, uint256) {
         address player1 = msg.sender;
-        (uint256 gameNumber, address player2) = getPlayerGameNumber(player1);
+        (uint256 gameNumber, ) = getPlayerGameNumber(player1);
         require(gameNumber != 0, "Player is not in any game");
 
         Game storage game = games[gameNumber];
@@ -120,14 +120,14 @@ contract GuessNumberGame {
     function guessNumber(uint256 guess) external {
         address player1 = msg.sender;
         // 根据调起函数的玩家地址，返回游戏信息
-        (uint256 gameNumber, address player2) = getPlayerGameNumber(player1);
+        (uint256 gameNumber, ) = getPlayerGameNumber(player1);
         require(gameNumber != 0, "Player is not in any game");
 
         // 获取游戏信息
         Game storage game = games[gameNumber];
 
         // 获取游戏状态
-        (bool isMyTurn, bool isGameOver, uint256 remainingPool, uint256 roundNumber) = checkGameStatus();
+        (bool isMyTurn, bool isGameOver, , uint256 roundNumber) = checkGameStatus();
 
         // 确保游戏正在进行中
         require(!isGameOver, "Game is not in progress");
@@ -237,18 +237,20 @@ contract GuessNumberGame {
             platformFee = game.platformFee;
             playerFee = game.totalPool;
         }
+        // 结算游戏
+        matchmaking.settleGame(gameNumber, winner, playerFee, owner, platformFee);
 
         // 更新游戏状态
         game.winner = winner;
         game.isGameInProgress = false;
         uint256 roomNumber = game.roomNumber;
 
-        // 结算游戏
-        matchmaking.settleGame(gameNumber, winner, playerFee, owner, platformFee);
         // 删除游戏
         resetGame(gameNumber);
         // 删除房间
         matchmaking.resetRoom(roomNumber);
+        emit OneGameEnded(gameNumber, winner, playerFee);
+        emit GameFinished(gameNumber, roomNumber);
     }
 
 
