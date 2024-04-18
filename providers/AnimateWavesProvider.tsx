@@ -20,10 +20,10 @@ export default function AnimateWavesProvider({
         </AnimateWavesContext.Provider>
     );
 };
-export const useAnimateWaves = () => {
+export const useAnimateWavesProvider = () => {
     const context = useContext(AnimateWavesContext);
     if (!context) {
-        throw new Error('useAnimateWaves must be used within a AnimateWavesProvider');
+        throw new Error('useAnimateWavesProvider must be used within a AnimateWavesProvider');
     }
     return context;
 };

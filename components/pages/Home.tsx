@@ -1,20 +1,17 @@
 'use client';
 import { ReactTyped } from "react-typed";
 import { useEffect, useState } from "react";
-import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
+import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
 interface HomeProps {
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
 }
 export default function Home({setCurrentPage}: HomeProps) {
-    const { animateWaves, setAnimateWaves } = useAnimateWaves();
+    const { animateWaves, setAnimateWaves } = useAnimateWavesProvider();
     const handleClick = () => {
         setAnimateWaves(true);
         // for switching component effect
         setTimeout(() => {
-                setAnimateWaves(false);
                 setCurrentPage("PreGame");
-                //console.log("Switching to PreGame Component");
-            
         }, 1000);
     }
     return (

@@ -17,9 +17,9 @@ import { useViewBalance, useMint } from "@/hooks/gameHooks";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
 interface TopUpButtonProps {
-  isFetching: boolean;
+  gameStatus: "InSinglePlayerGame" | "InMultiPlayerGame" | "NotInGame" | "StartingSinglePlayerGame" | "StartingMultiPlayerGame";
 }
-export default function TopUpButton({ isFetching }: TopUpButtonProps) {
+export default function TopUpButton({ gameStatus }: TopUpButtonProps) {
   const {address} = useAccount();
   const balance = useViewBalance(address);
   const mint = useMint(address);
@@ -47,8 +47,8 @@ export default function TopUpButton({ isFetching }: TopUpButtonProps) {
       <DialogTrigger asChild>
         
                 <button
-                    className={`w-fit btn uppercase select-none text-lg md:text-3xl mb-8  transition-all duration-300 ease-out ${isFetching?"text-slate-300/50":authStatus === 'authenticated'? "animated-underline text-slate-300 [&:not(:hover)]:animate-pulse [&:not(:focus)]:animate-pulse": "text-slate-300/50 line-through"}`}
-                    disabled={authStatus !== 'authenticated' || isFetching}
+                    className={`w-fit btn uppercase select-none text-lg md:text-3xl mb-8  transition-all duration-300 ease-out ${gameStatus!=="NotInGame"?"text-slate-300/50":authStatus === 'authenticated'? "animated-underline text-slate-300 [&:not(:hover)]:animate-pulse [&:not(:focus)]:animate-pulse": "text-slate-300/50 line-through"}`}
+                    disabled={authStatus !== 'authenticated' || gameStatus!=="NotInGame"}
                 >
                     TOP UP
                 </button>

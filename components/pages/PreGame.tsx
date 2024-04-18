@@ -5,10 +5,11 @@ import { useReadGreetingGreet } from '@/hooks/generated';
 import { useAccount } from 'wagmi';
 interface PreGameProps {
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
+    handleStartNewGame: (showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null) => void;
 }
-export default function PreGame({ setCurrentPage }: PreGameProps) {
+export default function PreGame({ setCurrentPage, handleStartNewGame }: PreGameProps) {
     const [selectedGame, setSelectedGame] = useState<"SinglePlayerGame" | "MultiPlayerGame" | "SinglePlayerGameCanceled" | "MultiPlayerGameCanceled"  | null>(null);
-    const [showOptions, setShowOptions] = useState<"SinglePlayerGame" | "MultiPlayerGame" | null>(null);
+    const [showOptions, setShowOptions] = useState<"SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null>(null);
     // const account = useAccount();
     // const greeting = useReadGreetingGreet({account: account.address});
     const handleSelectGame = (gameType: "SinglePlayerGame" | "MultiPlayerGame") => {
@@ -34,7 +35,7 @@ export default function PreGame({ setCurrentPage }: PreGameProps) {
                                 SinglePlayer
                             </button>
                     )}
-                    {((!!showOptions && selectedGame === 'MultiPlayerGame') || selectedGame==="MultiPlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} />}
+                    {((!!showOptions && selectedGame === 'MultiPlayerGame') || selectedGame==="MultiPlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
                         </div>
                 </div>
                 <div className={`bg-slate-300 h-40 w-[2px] m-4 hidden md:block transition duration-300 ${selectedGame === 'MultiPlayerGame' ? "rotate-[-60deg]" : "rotate-[60deg]"}`}>
@@ -52,7 +53,7 @@ export default function PreGame({ setCurrentPage }: PreGameProps) {
                             </button>
                         
                     )}
-                    {((!!showOptions && selectedGame === 'SinglePlayerGame') || selectedGame==="SinglePlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions}/>}
+                    {((!!showOptions && selectedGame === 'SinglePlayerGame') || selectedGame==="SinglePlayerGameCanceled") && <GameOptions showOptions={showOptions} setCurrentPage={setCurrentPage} setSelectedGame={setSelectedGame} setShowOptions={setShowOptions} handleStartNewGame={handleStartNewGame}/>}
                     </div>
                 </div>
             </div>
