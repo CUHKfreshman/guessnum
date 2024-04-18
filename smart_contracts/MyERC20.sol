@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.25;
 
 import "./IERC20.sol";
 
@@ -77,6 +77,10 @@ contract MyERC20 is IERC20 {
         balanceOf[from] -= amount;
         totalSupply -= amount;
         emit Transfer(from, address(0), amount);
+    }
+
+    function buy(address to, uint256 amount) external {
+        _mint(to, amount);
     }
 
     function mint(address to, uint256 amount) external onlyOwner{
