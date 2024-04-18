@@ -45,7 +45,7 @@ contract GuessNumberSinglePlayer {
     
     event GameStarted(uint256 indexed gameNumber, address indexed player1);
     event OneGameEnded(uint256 indexed gameNumber, address indexed winner, uint256 winnings); // 一局游戏结束的事件
-    event NumberGuessed(uint256 indexed gameID, address indexed player, uint256 number); // 玩家猜测数字的事件
+    event NumberGuessed(uint256 indexed gameNumber, address indexed player, uint256 number, bool isGameEnded); // 玩家猜测数字的事件
 
     constructor(address _token) {
         token = IERC20(_token);
@@ -62,7 +62,7 @@ contract GuessNumberSinglePlayer {
         require(token.transferFrom(owner, address(this), stakeAmount * tokenAmount), "Failed to transfer tokens");
 
         // 生成随机数
-        uint256 winningNumber1 = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, seed))) % 10;
+        uint256 winningNumber1 = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed))) % 10;
 
         // 创建游戏
         createGame(player1, winningNumber1);
@@ -90,18 +90,22 @@ contract GuessNumberSinglePlayer {
     function checkGameStatus() public view returns (bool, uint256) {
         address player1 = msg.sender;
         uint256 gameNumber = getPlayerGameNumber(player1);
-        require(gameNumber != 0, "Player is not in any game");
+        bool isGameEnded = false;
+        uint256 remainingPool = 0;
+        if(gameNumber == 0){
+            isGameEnded = true;
+        }
+        else{
+            Game storage game = games[gameNumber];
+            remainingPool = game.totalPool;
+            isGameEnded = !game.isGameInProgress;
+        }
 
-        Game storage game = games[gameNumber];
-
-        // bool isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
-        bool isGameEnded = !game.isGameInProgress;
-        uint256 remainingPool = game.totalPool;
         // uint256 roundNumber = game.turnNumber / 2 + 1; // 两个玩家轮流猜过视为一轮
         return (isGameEnded, remainingPool);
     }
     
-    function guessNumber(uint256 guess) external {
+    function guessNumber(uint256 guess) external returns (bool) {
         address player1 = msg.sender;
         // 根据调起函数的玩家地址，返回游戏信息
         uint256 gameNumber = getPlayerGameNumber(player1);
@@ -118,10 +122,7 @@ contract GuessNumberSinglePlayer {
 
         // 确保猜测在有效范围内
         require(guess >= 1 && guess <= 10, "Guess is out of range");
-
-        // 触发玩家猜测数字的事件
-        emit NumberGuessed(gameNumber, player1, guess);
-
+        bool isGameEnded = false;
         // 处理玩家猜测
         if (guess == game.winningNumber1) {
             // 计算奖金和平台费用
@@ -136,6 +137,7 @@ contract GuessNumberSinglePlayer {
             game.isGameInProgress = false;
             resetGame(gameNumber);
             emit OneGameEnded(gameNumber, msg.sender, winnings);
+            isGameEnded = true;
         }
         else {
             // 如果没有猜中，增加轮数
@@ -146,6 +148,10 @@ contract GuessNumberSinglePlayer {
             game.platformFee = platformFee;
             game.totalPool = winnings;
         }
+
+        // 触发玩家猜测数字的事件
+        emit NumberGuessed(gameNumber, player1, guess, isGameEnded);
+        return isGameEnded;
     }
 
     // 重置游戏
@@ -205,16 +211,16 @@ contract GuessNumberSinglePlayer {
         return (0); // 如果玩家不在任何游戏中，则返回 (0)
     }
 
-    function isGameTimeout(uint256 gameID) public view returns (bool) {
-        Game storage game = games[gameID];
+    function isGameTimeout(uint256 gameNumber) public view returns (bool) {
+        Game storage game = games[gameNumber];
 
         // 如果当前时间超过游戏开始时间加上十分钟，那么游戏就超时了
         return block.timestamp > game.startTime + 10 minutes;
     }
 
 
-    function remainingTime(uint256 gameID) public view returns (uint256) {
-        Game storage game = games[gameID];
+    function remainingTime(uint256 gameNumber) public view returns (uint256) {
+        Game storage game = games[gameNumber];
 
         // 计算游戏剩余的时间
         uint256 endTime = game.startTime + 10 minutes;
