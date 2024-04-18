@@ -5,17 +5,33 @@ import { fetchGuessResult } from '@/apis/gameApi';
 import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
 import { useCheckGameStatus, useSendGuess } from "@/hooks/gameHooks";
 import FlipCards from "@/components/custom/FlipCards"
-interface SinglePlayerGameProps {
+import RoundOverlay from "@/components/custom/RoundOverlay"
+interface MultiPlayerGameProps {
     hasFoundMatch: boolean;
     setHasFoundMatch: (value: boolean) => void;
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
 }
-export default function SinglePlayerGame({ hasFoundMatch, setHasFoundMatch, setCurrentPage }: SinglePlayerGameProps) {
+export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCurrentPage }: MultiPlayerGameProps) {
     const { setAnimateWaves } = useAnimateWaves();
     //State to track the flip status of each card using an object where the keys are card indices
     const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
     const [guessResults, setGuessResults] = useState<{ [key: number]: boolean | null }>({});
     const [remainingStake, setRemainingStake] = useState<number>(20);
+    const [fadeRoundOverlay, setFadeRoundOverlay] = useState<boolean>(false);
+    const [showRoundOverlay, setShowRoundOverlay] = useState<boolean>(true);
+    const [isMyTurn, setIsMyTurn] = useState<boolean>(false);
+    const [roundNumber, setRoundNumber] = useState<number>(1);
+    useEffect(() => {
+        // show the flip cards after 1s
+        setTimeout(() => {
+            setFadeRoundOverlay(true);
+        }, 1000);
+    }, []);
+    useEffect(() => {
+        setTimeout(() => {
+            setShowRoundOverlay(!fadeRoundOverlay);
+        }, 500);
+    }, [fadeRoundOverlay]);
     const handleTryAgain = () => {
         setFlippedCards({});
         setGuessResults({});
@@ -37,11 +53,12 @@ export default function SinglePlayerGame({ hasFoundMatch, setHasFoundMatch, setC
     return (
         <>
             <div className={`flex flex-row`}>
-                <div className={`flex flex-col items-center justify-center z-[50] select-none transition-opacity duration-500`}>
+                {showRoundOverlay && <RoundOverlay roundNumber={roundNumber} fadeRoundOverlay={fadeRoundOverlay}/>}
+                <div className={`flex flex-col items-center justify-center z-[50] select-none transition-opacity duration-500 ${showRoundOverlay?"opacity-0":""}`}>
                     <h1 className={`${hasFoundMatch ? "text-md md:text-2xl lg:text-4xl text-shadow-success" : "text-2xl md:text-4xl lg:text-7xl"} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
                         {Object.keys(guessResults).length < 10 && !hasFoundMatch ? "Choose Your Fortune!" : hasFoundMatch ? '🎉 Congratulations! You found a match! 🎉' : '❌ Sorry! No match found! ❌'}
                     </h1>
-                    <FlipCards hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} />
+                    <FlipCards hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn}/>
                     <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch ? "" : "opacity-[0%] hidden"}`}>
                         <div className="flex flex-col items-center justify-center gap-4">
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"

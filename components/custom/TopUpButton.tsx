@@ -16,7 +16,10 @@ import { useAccount, useBalance } from "wagmi";
 import { useViewBalance, useMint } from "@/hooks/gameHooks";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
-export default function TopUpButton() {
+interface TopUpButtonProps {
+  isFetching: boolean;
+}
+export default function TopUpButton({ isFetching }: TopUpButtonProps) {
   const {address} = useAccount();
   const balance = useViewBalance(address);
   const mint = useMint(address);
@@ -35,7 +38,8 @@ export default function TopUpButton() {
     mint(mintTokenNumber);
     toast({
       title: "Top Up Success",
-      description: `You have successfully topped up ${mintTokenNumber} tokens`,
+      description: `You have successfully topped up ${mintTokenNumber} tokens!`,
+      variant:"success"
     });
   }
   return (
@@ -43,8 +47,8 @@ export default function TopUpButton() {
       <DialogTrigger asChild>
         
                 <button
-                    className={`w-fit btn uppercase select-none text-lg md:text-3xl mb-8  transition-all duration-300 ease-out ${authStatus === 'authenticated'? "animated-underline text-slate-300 [&:not(:hover)]:animate-pulse [&:not(:focus)]:animate-pulse": "text-slate-300/50 line-through"}`}
-                    disabled={authStatus !== 'authenticated'}
+                    className={`w-fit btn uppercase select-none text-lg md:text-3xl mb-8  transition-all duration-300 ease-out ${isFetching?"text-slate-300/50":authStatus === 'authenticated'? "animated-underline text-slate-300 [&:not(:hover)]:animate-pulse [&:not(:focus)]:animate-pulse": "text-slate-300/50 line-through"}`}
+                    disabled={authStatus !== 'authenticated' || isFetching}
                 >
                     TOP UP
                 </button>

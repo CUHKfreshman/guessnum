@@ -60,6 +60,9 @@
   transition: --myColor1 500ms, --myColor2 500ms, --myColor3 500ms;
 }
 
+.bg-gradient-base-pure {
+  background: linear-gradient(to left bottom, var(--myColor1), var(--myColor2), var(--myColor3));
+}
 .bg-gradient-success {
   --myColor1: rgb(133 77 14);
   --myColor2: rgb(202 138 4);
@@ -120,8 +123,11 @@
 .flip-card-front.flipped {
   transform: rotateY(0deg);
 }
-.text-shadow-special {
+.text-shadow-success {
   text-shadow: 0px 0px 20px  rgb(246, 223, 92);
+}
+.text-shadow-base {
+  text-shadow: 0px 0px 20px  rgb(88 28 135);
 }
 @keyframes fadeIn {
   from { opacity: 0; }

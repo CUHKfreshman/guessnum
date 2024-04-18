@@ -5,6 +5,7 @@ import FloatingNumbers from "@/components/custom/FloatingNumbers";
 import { useEffect, useState } from "react";
 import Home from "@/components/pages/Home";
 import SinglePlayerGame from "@/components/pages/SinglePlayerGame";
+import MultiPlayerGame from "@/components/pages/MultiPlayerGame";
 import PreGame from "@/components/pages/PreGame";
 import WalletButton from "@/components/custom/WalletButton";
 import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
@@ -20,10 +21,10 @@ export default function Page() {
         return <PreGame setCurrentPage={setCurrentPage} />;
       case 'SinglePlayerGame':
         return <SinglePlayerGame setCurrentPage={setCurrentPage} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />;
-      //case 'MultiPlayerGame':
-      //  return <MultiPlayerGame />;
+      case 'MultiPlayerGame':
+        return <MultiPlayerGame setCurrentPage={setCurrentPage} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} />;
       default:
-        return <div>Page not found</div>;
+        return <Home setCurrentPage={setCurrentPage} />;
     }
   };
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className={`z-[100] fixed flex flex-col m-0 p-0 gap-0 justify-center items-start h-full w-full top-[-67%] transition ease-in-out duration-500 ${animateWaves ? "translate-y-[67%]" : ""}`}>
+      <div className={`z-[998] fixed flex flex-col m-0 p-0 gap-0 justify-center items-start h-full w-full top-[-67%] transition ease-in-out duration-500 ${animateWaves ? "translate-y-[67%]" : ""}`}>
         <div className={`relative w-full flex-2 m-0 p-0 ${animateWaves ? "mb-[-1px]" : "mb-[-1px] lg:mb-0"}`}>
           <div className={`absolute top-0 h-full w-full bg-slate-200 transition ease-in-out duration-500 ${animateWaves ? "" : " opacity-[50%]"}`}></div>
           <div className={`absolute top-0 h-full w-full bg-slate-200 transition ease-in-out duration-500 opacity-[50%]`}></div>
