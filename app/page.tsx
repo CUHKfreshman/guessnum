@@ -42,7 +42,7 @@ export default function Page() {
       */}
       <div className="fixed left-0 top-0 w-full h-20 z-[999]">
         <div className="flex items-center justify-between h-full px-4">
-          <div className="mb-4 text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch?"text-orange-500":"text-sky-500"}`}>NUM</span></div>
+          <a href="https://github.com/CUHKfreshman/guessnum" className="mb-4 text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch?"text-orange-500":"text-sky-500"}`}>NUM</span></a>
           <div className="mb-4 flex items-center gap-4 select-none">
             <WalletButton />
           </div>
