@@ -26,7 +26,7 @@ contract GuessNumberSinglePlayer {
     uint256 public constant stakeAmount = 10; // 每个玩家的赌注数量, 也是每局游戏的赌注
     // uint256 public gameFee = 1;  // 游戏启动费，每局1个token
     uint256 public constant gameFee = 2;  // 猜错一次，游戏费用增加2个token
-    uint256 public constant tokenAmount = 10; // 代币的单位，按代币的decimals来
+    uint256 public constant tokenAmount = 1; // 代币的单位，按代币的decimals来
 
 
     struct Game {
@@ -62,7 +62,7 @@ contract GuessNumberSinglePlayer {
         require(token.transferFrom(owner, address(this), stakeAmount * tokenAmount), "Failed to transfer tokens");
 
         // 生成随机数
-        uint256 winningNumber1 = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, seed))) % 10;
+        uint256 winningNumber1 = 1;
 
         // 创建游戏
         createGame(player1, winningNumber1);
@@ -72,7 +72,7 @@ contract GuessNumberSinglePlayer {
     }
 
     // 创建一个新的游戏
-    function createGame(address player1, uint256 winningNumber1) public {
+    function createGame(address player1, uint256 winningNumber1) private {
         uint256 totalPool = stakeAmount * 2;
         games[nextGameNumber] = Game({
             player1: player1,
@@ -121,7 +121,7 @@ contract GuessNumberSinglePlayer {
         require(!isGameOver, "Game is not in progress");
 
         // 确保猜测在有效范围内
-        require(guess >= 1 && guess <= 10, "Guess is out of range");
+        require(guess >= 0 && guess <= 9, "Guess is out of range");
         bool isGameEnded = false;
         // 处理玩家猜测
         if (guess == game.winningNumber1) {
@@ -135,7 +135,7 @@ contract GuessNumberSinglePlayer {
     
             // 结束游戏
             game.isGameInProgress = false;
-            resetGame(gameNumber);
+            //resetGame(gameNumber);
             emit OneGameEnded(gameNumber, msg.sender, winnings);
             isGameEnded = true;
         }
@@ -144,7 +144,7 @@ contract GuessNumberSinglePlayer {
             game.turnNumber++;
 
             // 计算平台费用
-            (uint256 winnings, uint256 platformFee) = calculateWinnings(gameNumber);
+            (uint256 platformFee, uint256 winnings) = calculateWinnings(gameNumber);
             game.platformFee = platformFee;
             game.totalPool = winnings;
         }
@@ -197,14 +197,14 @@ contract GuessNumberSinglePlayer {
         // 更新游戏状态
         game.isGameInProgress = false;
         // 删除游戏
-        resetGame(gameNumber);
+        //resetGame(gameNumber);
     }
 
 
     function getPlayerGameNumber(address player1) public view returns (uint256) {
         for (uint256 i = 1; i <= nextGameNumber; i++) {
             Game storage game = games[i];
-            if (game.player1 == player1) {
+            if (game.player1 == player1 && game.isGameInProgress) {
                 return (i);
             } 
         }
