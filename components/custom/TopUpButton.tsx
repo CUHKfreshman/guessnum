@@ -13,10 +13,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppProvider } from "@/providers/appContextProvider";
 import { useAccount, useBalance } from "wagmi";
+import { useViewBalance, useMint } from "@/hooks/gameHooks";
+import { useState } from "react";
+import { useToast } from "../ui/use-toast";
 export default function TopUpButton() {
   const {address} = useAccount();
-  const {data:balanceData} = useBalance({address:address});
+  const balance = useViewBalance(address);
+  const mint = useMint(address);
+  const [mintTokenNumber, setMintTokenNumber] = useState(0);
   const { authStatus } = useAppProvider();
+  const { toast } = useToast();
+  const handleTopUp = () => {
+    if(mintTokenNumber <= 0) {
+      toast({
+        title: "Invalid Top Up",
+        description: "Please enter a valid number of tokens to top up",
+        variant:"destructive"
+      });
+      return;
+    }
+    mint(mintTokenNumber);
+    toast({
+      title: "Top Up Success",
+      description: `You have successfully topped up ${mintTokenNumber} tokens`,
+    });
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -43,7 +64,7 @@ export default function TopUpButton() {
             </Label>
             <Input
               id="remaining-tokens"
-              defaultValue={0}
+              defaultValue={balance}
               className="col-span-3"
               disabled={true}
             />
@@ -54,13 +75,14 @@ export default function TopUpButton() {
             </Label>
             <Input
               id="add-token"
+              onChange={(e) => setMintTokenNumber(parseInt(e.target.value))}
               defaultValue={0}
               className="col-span-3"
             />
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Top Up</Button>
+          <Button type="submit" onClick={handleTopUp}>Top Up</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,8 +1,9 @@
 'use client';
 import { MouseEvent, useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import fetchGuessResult from '@/services/gameApi';
+import {fetchGuessResult} from '@/apis/gameApi';
 import { useAnimateWaves } from "@/providers/AnimateWavesProvider";
+import { useCheckGameStatus, useSendGuess } from "@/hooks/gameHooks";
 interface SinglePlayerGameProps {
     hasFoundMatch: boolean;
     setHasFoundMatch: (value: boolean) => void;
@@ -13,8 +14,19 @@ export default function SinglePlayerGame({hasFoundMatch,setHasFoundMatch, setCur
     //State to track the flip status of each card using an object where the keys are card indices
     const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
     const [guessResults, setGuessResults] = useState<{ [key: number]: boolean | null }>({});
+    const [remainingStake, setRemainingStake] = useState<number>(20);
     const [isFetching, setIsFetching] = useState(false);
     const isFetchingRef = useRef(isFetching);
+    const { guessedNumbers,gameEnded, prizePool } = useCheckGameStatus({gameType:"SinglePlayerGame"});
+    // useEffect(() => {
+    //     // initialize guessResults if refreshed page
+    //     guessedNumbers.forEach((num) => {
+    //         setGuessResults(prevGuessResults => ({
+    //             ...prevGuessResults,
+    //             [num]: true
+    //         }));
+    //     })
+    // }, [guessedNumbers]);
     const handleMouseMove = (e: MouseEvent<HTMLDivElement>, index: number) => {
         // return if flipped
         if (!!flippedCards[index]) { return; } // only rotate the card if it is not flipped

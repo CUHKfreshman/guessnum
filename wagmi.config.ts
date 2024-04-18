@@ -1,9 +1,9 @@
 import { defineConfig } from '@wagmi/cli'
 import { etherscan, react } from '@wagmi/cli/plugins'
-import { greetingsAbi } from '@/services/abi'
+import { greetingsAbi } from '@/hooks/abi'
 import { klaytnBaobab } from 'wagmi/chains'
 export default defineConfig({
-  out: 'src/generated.ts',
+  out: 'hooks/generated.ts',
   contracts: [
     {
       name: 'greeting',
