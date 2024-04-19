@@ -134,7 +134,7 @@ contract RandomMatchmaking {
     // 获取房间信息
     function getPlayerRoomNumber(address player1) public view returns (uint256, address player2, uint256,
         uint256) {
-        for (uint256 i = 1; i < nextRoomNumber; i++) {
+        for (uint256 i = nextRoomNumber; i > 0; i--) {
             Room storage room = rooms[i];
             if(room.isRoomActive){
                 
