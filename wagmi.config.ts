@@ -21,7 +21,7 @@ export default defineConfig({
     },
     {
       name: 'MultiPlayerGame',
-      address: "0x076D0186310f446dD2Bd39Ee9D513d2619Dc0F74",//"0x91Ae40b176a31740437eeEbB47B9d75D0417af38",
+      address: "0x954d2a8dEE7128aB7986D87E93AEdC999Fad6Fd8",//"0x91Ae40b176a31740437eeEbB47B9d75D0417af38",
       abi: MultiPlayerGameAbi,
     },
     {
