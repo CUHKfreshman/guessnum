@@ -25,7 +25,7 @@ contract GuessNumberGame {
         bool isGameInProgress;
         uint256 winningNumber1;
         uint256 winningNumber2;
-        address starter;
+        // address starter;
         uint256 startTime;
         uint256 mostRecentGuessedNumber; // 最近猜测的数字
         bool isRoundend; // 第一局游戏是否结束
@@ -34,7 +34,7 @@ contract GuessNumberGame {
     mapping(uint256 => Game) public games;
     uint256 public nextGameNumber = 1;
     // 外部映射来跟踪玩家是否已经猜过
-    mapping(uint256 => mapping(address => bool)) public hasGuessed;
+    // mapping(uint256 => mapping(address => bool)) public hasGuessed;
     // 两局游戏，回合数从0开始，第一局回合数是偶数，是player1的回合，奇数是player2的回合，player1先手，第二局回合数是奇数，是player2的回合，偶数是player1的回合，player2先手
 
     event GameStarted(uint256 indexed roomNumber, address indexed player1,  address indexed player2);
@@ -67,7 +67,7 @@ contract GuessNumberGame {
     }
 
     // 创建一个新的游戏
-    function createGame(uint256 roomNumber, address player1, address player2, uint256 winningNumber1, uint256 winningNumber2) public {
+    function createGame(uint256 roomNumber, address player1, address player2, uint256 winningNumber1, uint256 winningNumber2) private {
         uint256 totalPool = stakeAmount;
         games[nextGameNumber] = Game({
             roomNumber: roomNumber,
@@ -81,7 +81,7 @@ contract GuessNumberGame {
             isGameInProgress: true,
             winningNumber1: winningNumber1,
             winningNumber2: winningNumber2,
-            starter: address(0),
+            // starter: address(0),
             startTime: block.timestamp,
             mostRecentGuessedNumber: 10,
             isRoundend: false
@@ -145,7 +145,7 @@ contract GuessNumberGame {
         game.mostRecentGuessedNumber = guess;
 
         // 标记玩家已经猜过
-        hasGuessed[gameNumber][msg.sender] = true;
+        // hasGuessed[gameNumber][msg.sender] = true;
 
         // 触发玩家猜测数字的事件
         emit NumberGuessed(gameNumber, player1, guess);
