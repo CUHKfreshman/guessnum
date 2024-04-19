@@ -97,7 +97,15 @@ contract GuessNumberGame {
 
         Game storage game = games[gameNumber];
 
-        bool isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
+        bool isMyTurn;
+        if (game.turnNumber == 1) {
+            // 在第一局游戏中，player1 是先手
+            isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
+        } else {
+            // 在第二局游戏中，player2 是先手
+            isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player2) || (game.turnNumber % 2 == 1 && player1 == game.player1);
+        }
+        
         bool isGameEnded = !game.isGameInProgress;
         uint256 remainingPool = game.totalPool;
         uint256 roundNumber = game.roundNumber;
