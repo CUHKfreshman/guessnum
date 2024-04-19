@@ -79,6 +79,7 @@ contract MyERC20 is IERC20 {
         emit Transfer(from, address(0), amount);
     }
 
+    // temporiry workaround to mimic the purchase coin behavior of player
     function buy(address to, uint256 amount) external {
         _mint(to, amount);
     }
