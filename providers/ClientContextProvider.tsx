@@ -34,8 +34,13 @@ export default function ClientContextProvider({
     }, [singlePlayerGameNumber]);
     useEffect(() => {
         if(matchMakingRoomNData?.[0]){
-            console.log("provider matchMakingRoomData",matchMakingRoomNData?.[0]);
-            _setMatchMakingRoomNumber(matchMakingRoomNData[0]);
+            console.log("provider matchMakingRoomNData");
+            if(parseInt(matchMakingRoomNData[1], 16) === 0){
+                _setMatchMakingRoomNumber(BigInt(0));
+            }
+            else{
+                _setMatchMakingRoomNumber(matchMakingRoomNData[0]);
+            }
         }
     }, [matchMakingRoomNData]);
     return (

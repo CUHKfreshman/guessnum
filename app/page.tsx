@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useWaitForTransactionReceipt } from "wagmi";
 import { useClientContextProvider } from "@/providers/ClientContextProvider";
-import { useWriteMatchMakingJoinGame, singlePlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useWriteSinglePlayerGameStartGame, matchMakingAddress } from "@/hooks/generated";
+import { useReadMatchMakingGetPlayerRoomNumber,useWriteMatchMakingJoinGame, singlePlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useWriteSinglePlayerGameStartGame, matchMakingAddress } from "@/hooks/generated";
 // import SinglePlayerGameStartEventListener from "@/components/hooks/SinglePlayerGameStartEventListener";
 export default function Page() {
   const { animateWaves, setAnimateWaves } = useAnimateWavesProvider();
@@ -80,6 +80,7 @@ export default function Page() {
         WriteSinglePlayerGameStartGame({ account: address, args: [BigInt(42)] }); // seed
       }
       else if (gameStatus === "StartingMultiPlayerGame") {
+        console.log("starting multi player game...")
         WriteMatchMakingJoinGame({ account: address, args: [BigInt(42)] });
       }
     }
@@ -113,7 +114,7 @@ export default function Page() {
     }
   }, [singlePlayerGameNumber])
   useEffect(() => {
-    if (gameStatus === "NotInGame") {
+    if (gameStatus === "NotInGame" || gameStatus==="StartingMultiPlayerGame") {
       if (multiPlayerGameNumber !== undefined && multiPlayerGameNumber.toString() !== "0") {
         toast({
           title: "Multiplayer Game Matched",
@@ -174,6 +175,7 @@ export default function Page() {
       // }, 500);
     }
     else if (showOptions === "MultiPlayerGame") {
+      console.log("game number", gameNumber, gameStatus)
       if(gameNumber!==undefined && gameStatus==="NotInGame"){
         handleEnterGame("MultiPlayerGame");
         return
@@ -185,6 +187,7 @@ export default function Page() {
         approveGNC({ account: address, args: [matchMakingAddress, BigInt(1000)] });
       }
       else {
+        console.log("join multiplayer game...")
         WriteMultiPlayerGameStartGame({ account: address });
       }
     }
