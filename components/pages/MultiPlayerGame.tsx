@@ -28,6 +28,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     const [title, setTitle] = useState<string>("");
     const [fadeTitle, setFadeTitle] = useState<boolean>(false);
     const [lastClickedIndex, setLastClickedIndex] = useState<number>(-1);
+    const [mostRecentIndex, setMostRecentIndex] = useState<number>(-1);
     const isFetchingRef = useRef<boolean>(false);
     const { gameStatus, setGameStatus } = useGameStatusProvider();
     const { address } = useClientContextProvider();
@@ -55,16 +56,16 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
         // !IMPORTANT: uncomment this block after the gameStatusData is ready
         if (gameStatusData) {
             const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend] = gameStatusData;
-            const mostRecentIndex = Number(_mostRecentNumber);
-            // if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
-            if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn && _isRoundend === false) { return; } // new
+            const _mostRecentIndex = Number(_mostRecentNumber);
+            if (roundNumber === Number(_roundNumber) && _mostRecentIndex === mostRecentIndex) { return; } // new
+            setMostRecentIndex(_mostRecentIndex);
             // setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
-            setHasFoundMatch(!_isRoundend ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround, new
+            setHasFoundMatch(!(_isRoundend||_isGameEnded) ? false : (_mostRecentIndex === lastClickedIndex) ? "Client" : "Opponent"); // workround, new
             setIsMyTurn(_isMyTurn);
             setGuessResults(prevGuessResults => ({
                 ...prevGuessResults,
                 // [mostRecentIndex]: _isGameEnded
-                [mostRecentIndex]: _isRoundend // new
+                [_mostRecentIndex]: _isRoundend || _isGameEnded // new
             }));
             isFetchingRef.current = false;
             // round number is handled in below useEffect
