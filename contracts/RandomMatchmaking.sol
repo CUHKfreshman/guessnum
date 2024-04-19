@@ -99,7 +99,7 @@ contract RandomMatchmaking {
         uint256 lastActionTime = room.lastActionTime;
         require(block.timestamp > lastActionTime + roomTimeout, "Timeout not reached");
 
-        resetRoom(roomNumber);
+        //resetRoom(roomNumber);
     }
 
     // 使用种子生成两个隐藏数字
@@ -122,17 +122,17 @@ contract RandomMatchmaking {
     }
 
     // 重置房间
-    function resetRoom(uint256 roomNumber) public {
-        Room storage room = rooms[roomNumber];
-        room.player1 = address(0);
-        room.player2 = address(0);
-        room.isFull = false;
-        room.lastActionTime = block.timestamp;
-        room.winningNumber1 = 0;
-        room.winningNumber2 = 0;
-        room.seed1 = 0;
-        room.seed2 = 0;
-    }
+    // function resetRoom(uint256 roomNumber) public {
+    //     Room storage room = rooms[roomNumber];
+    //     room.player1 = address(0);
+    //     room.player2 = address(0);
+    //     room.isFull = false;
+    //     room.lastActionTime = block.timestamp;
+    //     room.winningNumber1 = 0;
+    //     room.winningNumber2 = 0;
+    //     room.seed1 = 0;
+    //     room.seed2 = 0;
+    // }
 
     // 获取房间信息
     function getPlayerRoomNumber(address player1) public view returns (uint256, address player2, uint256,

@@ -113,7 +113,7 @@ contract GuessNumberGame {
         bool isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
         bool isGameEnded = !game.isGameInProgress;
         uint256 remainingPool = game.totalPool;
-        uint256 roundNumber = game.turnNumber / 2 + 1; // 两个玩家轮流猜过视为一轮
+        uint256 roundNumber = game.roundNumber;
         return (isMyTurn, isGameEnded, remainingPool, roundNumber);
     }
     
@@ -137,7 +137,7 @@ contract GuessNumberGame {
 
 
         // 确保猜测在有效范围内
-        require(guess >= 1 && guess <= 10, "Guess is out of range");
+        require(guess >= 0 && guess <= 9, "Guess is out of range");
 
         // 标记玩家已经猜过
         hasGuessed[gameNumber][msg.sender] = true;
@@ -171,8 +171,8 @@ contract GuessNumberGame {
                 game.isGameInProgress = false;
                 // 重置游戏
                 uint roomNumber = game.roomNumber;
-                resetGame(gameNumber);
-                matchmaking.resetRoom(roomNumber);
+                // resetGame(gameNumber);
+                // matchmaking.resetRoom(roomNumber);
                 
                 emit OneGameEnded(gameNumber, msg.sender, winnings);
                 emit GameFinished(gameNumber, roomNumber);
@@ -246,9 +246,9 @@ contract GuessNumberGame {
         uint256 roomNumber = game.roomNumber;
 
         // 删除游戏
-        resetGame(gameNumber);
+        // resetGame(gameNumber);
         // 删除房间
-        matchmaking.resetRoom(roomNumber);
+        // matchmaking.resetRoom(roomNumber);
         emit OneGameEnded(gameNumber, winner, playerFee);
         emit GameFinished(gameNumber, roomNumber);
     }
