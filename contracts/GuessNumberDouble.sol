@@ -28,7 +28,7 @@ contract GuessNumberGame {
         address starter;
         uint256 startTime;
         uint256 mostRecentGuessedNumber; // 最近猜测的数字
-        bool isRound1end; // 第一局游戏是否结束
+        bool isRoundend; // 第一局游戏是否结束
     }
 
     mapping(uint256 => Game) public games;
@@ -84,7 +84,7 @@ contract GuessNumberGame {
             starter: address(0),
             startTime: block.timestamp,
             mostRecentGuessedNumber: 10,
-            isRound1end: false
+            isRoundend: false
         });
         nextGameNumber++;
     }
@@ -110,8 +110,8 @@ contract GuessNumberGame {
         uint256 remainingPool = game.totalPool;
         uint256 roundNumber = game.roundNumber;
         uint256 mostRecentGuessedNumber = game.mostRecentGuessedNumber;
-        bool isRound1end = game.isRound1end;
-        return (isMyTurn, isGameEnded, remainingPool, roundNumber, mostRecentGuessedNumber, isRound1end);
+        bool isRoundend = game.isRoundend;
+        return (isMyTurn, isGameEnded, remainingPool, roundNumber, mostRecentGuessedNumber, isRoundend);
     }
     
     function guessNumber(uint256 guess) external {
@@ -136,9 +136,9 @@ contract GuessNumberGame {
         // 确保猜测在有效范围内
         require(guess >= 0 && guess <= 9, "Guess is out of range");
 
-        // 如果第二局游戏开始，第一局游戏结束，改变isRound1end状态
+        // 如果第二局游戏开始，第一局游戏结束，改变isRoundend状态
         if (roundNumber == 2 && isRound1end == true) {
-            game.isRound1end = false;
+            game.isRoundend = false;
         }
 
         // 更新最近猜测的数字
@@ -166,13 +166,15 @@ contract GuessNumberGame {
             if (game.roundNumber == 1) {
                 game.roundNumber++;
                 game.turnNumber = 0;
-                game.isRound1end = true; // 第一局结束
+                game.isRoundend = true; // 第一局结束
 
                 game.platformFee = gameFee;
                 game.totalPool = stakeAmount;
                 
                 emit OneGameEnded(gameNumber, msg.sender, winnings);
             } else {
+                //
+                game.isRoundend = true; // 第二局结束
                 // 如果是第二局，结束游戏
                 game.isGameInProgress = false;
                 // 重置游戏

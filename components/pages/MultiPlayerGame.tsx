@@ -62,6 +62,9 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
             setGuessResults(prevGuessResults => ({
                 ...prevGuessResults,
                 [mostRecentIndex]: _isGameEnded
+            // changed catch game 1 end 
+            
+            
             }));
             isFetchingRef.current = false;
             // round number is handled in below useEffect
