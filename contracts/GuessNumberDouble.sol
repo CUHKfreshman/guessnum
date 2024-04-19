@@ -180,7 +180,7 @@ contract GuessNumberGame {
                 // 重置游戏
                 uint roomNumber = game.roomNumber;
                 // resetGame(gameNumber);
-                // matchmaking.resetRoom(roomNumber);
+                matchmaking.resetRoom(roomNumber);
                 
                 emit OneGameEnded(gameNumber, msg.sender, winnings);
                 emit GameFinished(gameNumber, roomNumber);
@@ -197,13 +197,13 @@ contract GuessNumberGame {
     }
 
     // 重置游戏
-    function resetGame(uint256 gameNumber) public  {
-        Game storage game = games[gameNumber];
-        require(game.isGameInProgress, "Game is not in progress");
+    // function resetGame(uint256 gameNumber) public  {
+    //     Game storage game = games[gameNumber];
+    //     require(game.isGameInProgress, "Game is not in progress");
 
-        // 清空游戏数据
-        delete games[gameNumber];
-    }
+    //     // 清空游戏数据
+        
+    // }
 
     function calculateWinnings(uint256 gameNumber) public view returns (uint256 platformFee, uint256 playerFee) {
         Game storage game = games[gameNumber];
@@ -255,7 +255,7 @@ contract GuessNumberGame {
         // 删除游戏
         // resetGame(gameNumber);
         // 删除房间
-        // matchmaking.resetRoom(roomNumber);
+        matchmaking.resetRoom(roomNumber);
         emit OneGameEnded(gameNumber, winner, playerFee);
         emit GameFinished(gameNumber, roomNumber);
     }
@@ -264,9 +264,10 @@ contract GuessNumberGame {
     function getPlayerGameNumber(address player1) public view returns (uint256, address) {
         for (uint256 i = 1; i <= nextGameNumber; i++) {
             Game storage game = games[i];
-            if (game.player1 == player1) {
+            if (game.player1 == player1 && game.isGameInProgress) {
                 return (i, game.player2);
-            } else if (game.player2 == player1) {
+            } else if (game.player2 == player1 && game.isGameInProgress){
+                require(game.isGameInProgress, "Game is not in progress");
                 return (i, game.player1);
             }
         }
