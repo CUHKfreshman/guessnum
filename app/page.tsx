@@ -177,6 +177,7 @@ export default function Page() {
     else if (showOptions === "MultiPlayerGame") {
       console.log("game number", gameNumber, gameStatus)
       if(gameNumber!==undefined && (gameStatus==="NotInGame" || Number(multiPlayerGameNumber ?? 0) > 0)){
+        WriteMultiPlayerGameStartGame({ account: address });
         handleEnterGame("MultiPlayerGame");
         return
       }
