@@ -27,6 +27,7 @@ contract GuessNumberGame {
         uint256 winningNumber2;
         address starter;
         uint256 startTime;
+        uint256 mostRecentGuessedNumber; // 最近猜测的数字
     }
 
     mapping(uint256 => Game) public games;
@@ -80,13 +81,14 @@ contract GuessNumberGame {
             winningNumber1: winningNumber1,
             winningNumber2: winningNumber2,
             starter: address(0),
-            startTime: block.timestamp
+            startTime: block.timestamp,
+            mostRecentGuessedNumber: 10
         });
         nextGameNumber++;
     }
 
     // check game status, call by player
-    function checkGameStatus() public view returns (bool, bool, uint256, uint256) {
+    function checkGameStatus() public view returns (bool, bool, uint256, uint256, uint256) {
         address player1 = msg.sender;
         (uint256 gameNumber, ) = getPlayerGameNumber(player1);
         require(gameNumber != 0, "Player is not in any game");
@@ -97,7 +99,8 @@ contract GuessNumberGame {
         bool isGameEnded = !game.isGameInProgress;
         uint256 remainingPool = game.totalPool;
         uint256 roundNumber = game.roundNumber;
-        return (isMyTurn, isGameEnded, remainingPool, roundNumber);
+        uint256 mostRecentGuessedNumber = game.mostRecentGuessedNumber;
+        return (isMyTurn, isGameEnded, remainingPool, roundNumber, mostRecentGuessedNumber);
     }
     
     function guessNumber(uint256 guess) external {
@@ -110,7 +113,7 @@ contract GuessNumberGame {
         Game storage game = games[gameNumber];
 
         // 获取游戏状态
-        (bool isMyTurn, bool isGameOver, , uint256 roundNumber) = checkGameStatus();
+        (bool isMyTurn, bool isGameOver, , uint256 roundNumber, ) = checkGameStatus();
 
         // 确保游戏正在进行中
         require(!isGameOver, "Game is not in progress");
@@ -121,6 +124,9 @@ contract GuessNumberGame {
 
         // 确保猜测在有效范围内
         require(guess >= 0 && guess <= 9, "Guess is out of range");
+
+        // 更新最近猜测的数字
+        game.mostRecentGuessedNumber = guess;
 
         // 标记玩家已经猜过
         hasGuessed[gameNumber][msg.sender] = true;
@@ -141,7 +147,7 @@ contract GuessNumberGame {
             matchmaking.settleGame(game.roomNumber, game.winner, winnings, owner, platformFee);
     
             // 如果是第一局，增加轮数并重置玩家的猜测状态
-            if (roundNumber == 1) {
+            if (game.roundNumber == 1) {
                 game.roundNumber++;
                 game.turnNumber = 0;
 

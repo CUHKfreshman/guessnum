@@ -63,7 +63,7 @@ contract GuessNumberSinglePlayer {
 
         // 生成随机数
         bytes32 hash = keccak256(abi.encodePacked(block.timestamp, msg.sender, seed));
-        uint256 winningNumber1 = uint256(hash) % 10 + 1;
+        uint256 winningNumber1 = uint256(hash) % 10;
 
         // 创建游戏
         createGame(player1, winningNumber1);
