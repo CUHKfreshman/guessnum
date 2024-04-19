@@ -54,7 +54,11 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     useEffect(() => {
         const gameStatusData = fetchGameStatusData.data;
         // console.log("gameStatusData", fetchGameStatusData)
-        // !IMPORTANT: uncomment this block after the gameStatusData is ready
+        if (gameStatusData === undefined && isFetchingRef.current && roundNumber === 2 && hasTriggeredNextRoundEffect){
+            // setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
+            setHasFoundMatch(isMyTurn ? "Client" : "Opponent");
+            isFetchingRef.current = false;
+        }
         if (gameStatusData) {
             const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend] = gameStatusData;
             console.log("game status data", _isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend)
