@@ -173,7 +173,7 @@ contract GuessNumberGame {
                 
                 emit OneGameEnded(gameNumber, msg.sender, winnings);
             } else {
-                //
+            
                 game.isRoundend = true; // 第二局结束
                 // 如果是第二局，结束游戏
                 game.isGameInProgress = false;
@@ -189,7 +189,6 @@ contract GuessNumberGame {
         } else {
             // 如果没有猜中，增加轮数
             game.turnNumber++;
-
             // 计算平台费用
             (uint256 winnings, uint256 platformFee) = calculateWinnings(gameNumber);
             game.platformFee = platformFee;
@@ -211,9 +210,9 @@ contract GuessNumberGame {
         require(game.isGameInProgress, "Game is not in progress");
 
         uint256 currentFee;
-        if (game.turnNumber <= 3) {
+        if (game.turnNumber <= 2) {
             currentFee = 1;
-        } else if (game.turnNumber <= 7) {
+        } else if (game.turnNumber <= 6) {
             currentFee = 2;
         } else {
             currentFee = 3;
