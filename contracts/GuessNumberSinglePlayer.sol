@@ -62,7 +62,8 @@ contract GuessNumberSinglePlayer {
         require(token.transferFrom(owner, address(this), stakeAmount * tokenAmount), "Failed to transfer tokens");
 
         // 生成随机数
-        uint256 winningNumber1 = 1;
+        bytes32 hash = keccak256(abi.encodePacked(block.timestamp, msg.sender, seed));
+        uint256 winningNumber1 = uint256(hash) % 10 + 1;
 
         // 创建游戏
         createGame(player1, winningNumber1);
@@ -155,7 +156,7 @@ contract GuessNumberSinglePlayer {
     }
 
     // 重置游戏
-    function resetGame(uint256 gameNumber) public  {
+    function resetGame(uint256 gameNumber) internal {
         Game storage game = games[gameNumber];
         require(game.isGameInProgress, "Game is not in progress");
 
@@ -234,7 +235,7 @@ contract GuessNumberSinglePlayer {
     }
 
     // 游戏结算
-    function settleGame(uint256 gameNumber, address winner, uint256 prize, uint256 platformFee) public {
+    function settleGame(uint256 gameNumber, address winner, uint256 prize, uint256 platformFee) internal {
         Game storage game = games[gameNumber];
         require(game.isGameInProgress, "Game not in progress");
 
