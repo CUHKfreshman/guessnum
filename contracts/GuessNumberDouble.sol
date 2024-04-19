@@ -137,8 +137,8 @@ contract GuessNumberGame {
         require(guess >= 0 && guess <= 9, "Guess is out of range");
 
         // 如果第二局游戏开始，第一局游戏结束，改变isRound1end状态
-        if (roundNumber == 2 && isRound1end == false) {
-            game.isRound1end = true;
+        if (roundNumber == 2 && isRound1end == true) {
+            game.isRound1end = false;
         }
 
         // 更新最近猜测的数字
