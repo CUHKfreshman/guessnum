@@ -264,10 +264,9 @@ contract GuessNumberGame {
     function getPlayerGameNumber(address player1) public view returns (uint256, address) {
         for (uint256 i = 1; i <= nextGameNumber; i++) {
             Game storage game = games[i];
-            if (game.player1 == player1 && game.isGameInProgress) {
+            if (game.player1 == player1) {
                 return (i, game.player2);
-            } else if (game.player2 == player1 && game.isGameInProgress){
-                require(game.isGameInProgress, "Game is not in progress");
+            } else if (game.player2 == player1){
                 return (i, game.player1);
             }
         }
