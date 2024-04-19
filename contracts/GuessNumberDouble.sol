@@ -98,7 +98,7 @@ contract GuessNumberGame {
         Game storage game = games[gameNumber];
 
         bool isMyTurn;
-        if (game.turnNumber == 1) {
+        if (game.roundNumber == 1) {
             // 在第一局游戏中，player1 是先手
             isMyTurn = (game.turnNumber % 2 == 0 && player1 == game.player1) || (game.turnNumber % 2 == 1 && player1 == game.player2);
         } else {
