@@ -661,7 +661,7 @@ export const multiPlayerGameAbi = [
 ] as const
 
 export const multiPlayerGameAddress =
-  '0x91Ae40b176a31740437eeEbB47B9d75D0417af38' as const
+  '0xF940296d0d19A34574D7DfFAe6162CF49945DAb0' as const
 
 export const multiPlayerGameConfig = {
   address: multiPlayerGameAddress,
