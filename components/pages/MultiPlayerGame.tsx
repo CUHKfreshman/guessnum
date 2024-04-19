@@ -1,8 +1,6 @@
 'use client';
-import { MouseEvent, useEffect, useState, useRef } from "react";
-import { fetchGuessResult } from '@/apis/gameApi';
+import { useEffect, useState, useRef } from "react";
 import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
-import { useCheckGameStatus, useSendGuess } from "@/hooks/gameHooks";
 import FlipCards from "@/components/custom/FlipCards"
 import RoundOverlay from "@/components/custom/RoundOverlay"
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
@@ -152,7 +150,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
                     <h1 className={`${hasFoundMatch === 'Client' ? "text-md md:text-2xl lg:text-4xl text-shadow-success" : "text-2xl md:text-4xl lg:text-7xl"} ${fadeTitle ? "opacity-0" : ""} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
                         {title}
                     </h1>
-                    <FlipCards setLastClickedIndex={setLastClickedIndex} handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} isFetchingRef={isFetchingRef} setIsMyTurn={setIsMyTurn} />
+                    <FlipCards setLastClickedIndex={setLastClickedIndex} handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} isFetchingRef={isFetchingRef} setIsMyTurn={setIsMyTurn} />
                     <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch && roundNumber >= 2 ? "" : "opacity-[0%] hidden"}`}>
                         <div className="flex flex-col items-center justify-center gap-4">
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
@@ -160,13 +158,6 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
                                 onClick={handleBack}>- Back -</button>
                         </div>
-                    </div>
-                    {/** add some buttons to switch is my turn & round num for debug */}
-                    <div className="absolute bottom-0 left-0 flex flex-col items-center justify-center gap-4 z-[9999]">
-                        <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
-                            onClick={() => setIsMyTurn(prev => !prev)}>- Switch Turn -</button>
-                        <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
-                            onClick={() => setRoundNumber(prev => prev + 1)}>- Next Round -</button>
                     </div>
                 </div>
             </div>

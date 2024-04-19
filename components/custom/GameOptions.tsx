@@ -1,9 +1,6 @@
 'use client';
-import { useState, useContext, useEffect } from 'react';
 import { useAppProvider } from '@/providers/appContextProvider';
 import TopUpDialogButton from '@/components/custom/TopUpDialogButton';
-import { useAccount } from 'wagmi';
-import { useToast } from '../ui/use-toast';
 import { useGameStatusProvider } from '@/providers/GameStatusProvider';
 // import rainbowkit to get user's balance
 interface GameOptionsProps {
@@ -14,10 +11,7 @@ interface GameOptionsProps {
 }
 export default function GameOptions({ showOptions, setSelectedGame, setShowOptions, handleStartNewGame }: GameOptionsProps) {
     const { authStatus } = useAppProvider();
-    const { address } = useAccount();
     const {gameStatus} = useGameStatusProvider();
-    const {toast} = useToast();
-    // const JoinGame = useJoinGame();
 
     const handleBack = () => {
         if(showOptions === "SinglePlayerGame"){

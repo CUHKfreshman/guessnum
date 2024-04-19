@@ -1,16 +1,15 @@
 'use client';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect } from 'react';
-import { useAccount, useConfig } from 'wagmi';
+import { useClientContextProvider } from '@/providers/ClientContextProvider';
 import { useAppProvider } from '@/providers/appContextProvider';
-import { useToast } from '@/components/ui/use-toast';
 export default function WalletDialogButton() {
   const { setAuthStatus } = useAppProvider();
-  const clientAccount = useAccount();
+  const {address} = useClientContextProvider();
   useEffect(() => {
-      const authStatus = clientAccount.address ? "authenticated" : "unauthenticated";
+      const authStatus = address ? "authenticated" : "unauthenticated";
       setAuthStatus(authStatus);
-  },[clientAccount.address]);
+  },[address]);
   return (
     <ConnectButton
     />

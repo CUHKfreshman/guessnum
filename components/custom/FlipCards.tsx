@@ -1,12 +1,10 @@
 'use client';
-import { MouseEvent, useEffect, useState, useRef, Dispatch, SetStateAction, MutableRefObject } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { fetchGuessResult } from '@/apis/gameApi';
-import { useToast } from "../ui/use-toast";
+import { MouseEvent, useState, Dispatch, SetStateAction, MutableRefObject } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
 interface FlipCardsProps {
     hasFoundMatch: "Client" | "Opponent" | false;
-    setHasFoundMatch: (value: "Client" | "Opponent" | false) => void;
     flippedCards: { [key: number]: boolean };
     setFlippedCards: Dispatch<SetStateAction<{ [key: number]: boolean }>>;
     guessResults: { [key: number]: boolean | null };
@@ -17,9 +15,8 @@ interface FlipCardsProps {
     isMyTurn?: boolean;
     setIsMyTurn?: Dispatch<SetStateAction<boolean>>;
 }
-export default function FlipCards({ hasFoundMatch, setHasFoundMatch, handleSendGuess, guessResults, setGuessResults, flippedCards, setFlippedCards, isMyTurn, setIsMyTurn, isFetchingRef,setLastClickedIndex }: FlipCardsProps) {
+export default function FlipCards({ hasFoundMatch, handleSendGuess, guessResults, setGuessResults, flippedCards, setFlippedCards, isMyTurn, setIsMyTurn, isFetchingRef,setLastClickedIndex }: FlipCardsProps) {
 
-    const [remainingStake, setRemainingStake] = useState<number>(20);
     const {gameStatus} = useGameStatusProvider();
     const {toast} = useToast();
     // useEffect(() => {

@@ -1,6 +1,5 @@
 'use client';
 import { ReactTyped } from "react-typed";
-import { useEffect, useState } from "react";
 import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
 interface HomeProps {
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;

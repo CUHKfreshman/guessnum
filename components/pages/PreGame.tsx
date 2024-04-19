@@ -1,7 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import GameOptions from '@/components/custom/GameOptions';
-import { useAccount } from 'wagmi';
 interface PreGameProps {
     setCurrentPage: (pagename: "Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame") => void;
     handleStartNewGame: (showOptions: "SinglePlayerGame" | "MultiPlayerGame" | "MultiPlayerGameNextRound" | null) => void;

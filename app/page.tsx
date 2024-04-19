@@ -1,8 +1,6 @@
 'use client';
-import Image from "next/image";
-import { ReactTyped } from "react-typed";
 import FloatingNumbers from "@/components/custom/FloatingNumbers";
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import Home from "@/components/pages/Home";
 import SinglePlayerGame from "@/components/pages/SinglePlayerGame";
 import MultiPlayerGame from "@/components/pages/MultiPlayerGame";
@@ -10,13 +8,12 @@ import PreGame from "@/components/pages/PreGame";
 import WalletDialogButton from "@/components/custom/WalletDialogButton";
 import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
-import { useAccount } from "wagmi";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useWaitForTransactionReceipt } from "wagmi";
 import { useClientContextProvider } from "@/providers/ClientContextProvider";
-import { useWriteMatchMakingJoinGame, singlePlayerGameAddress, multiPlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useReadSinglePlayerGameGetPlayerGameNumber, useWriteSinglePlayerGameStartGame, useWatchSinglePlayerGameGameStartedEvent, matchMakingAddress } from "@/hooks/generated";
-import SinglePlayerGameStartEventListener from "@/components/hooks/SinglePlayerGameStartEventListener";
+import { useWriteMatchMakingJoinGame, singlePlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useWriteSinglePlayerGameStartGame, matchMakingAddress } from "@/hooks/generated";
+// import SinglePlayerGameStartEventListener from "@/components/hooks/SinglePlayerGameStartEventListener";
 export default function Page() {
   const { animateWaves, setAnimateWaves } = useAnimateWavesProvider();
   const { gameStatus, setGameStatus } = useGameStatusProvider();
@@ -194,7 +191,7 @@ export default function Page() {
       <img src="/wave.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       <img src="/wave2.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       */}
-      {(address && singlePlayerGameNumber !== undefined) && <SinglePlayerGameStartEventListener address={address} gameNumber={singlePlayerGameNumber} handleEnterGame={handleEnterGame} />}
+      {/* {(address && singlePlayerGameNumber !== undefined) && <SinglePlayerGameStartEventListener address={address} gameNumber={singlePlayerGameNumber} handleEnterGame={handleEnterGame} />} */}
       <div className="fixed left-0 top-0 w-full h-20 z-[999]">
         <div className="flex items-center justify-between h-full px-4">
           <a href="https://github.com/CUHKfreshman/guessnum" className="mb-4 text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch === 'Client' ? "text-orange-500" : "text-sky-500"}`}>NUM</span></a>

@@ -12,17 +12,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppProvider } from "@/providers/appContextProvider";
-import { useAccount, useBalance } from "wagmi";
 import { useReadGncBalanceOf, useWriteGncBuy } from "@/hooks/generated";
 import { useEffect, useState } from "react";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useWaitForTransactionReceipt } from "wagmi";
+import { useClientContextProvider } from "@/providers/ClientContextProvider";
 interface TopUpDialogButtonProps {
   gameStatus: "InSinglePlayerGame" | "InMultiPlayerGame" | "NotInGame" | "StartingSinglePlayerGame" | "StartingMultiPlayerGame";
 }
 export default function TopUpDialogButton({ gameStatus }: TopUpDialogButtonProps) {
-  const {address} = useAccount();
-  const {data:balance} = useReadGncBalanceOf({account:address, args:[address as `0x${string}`]});
+  const {address} = useClientContextProvider();
+  const {data:balance, refetch:refetchBalance} = useReadGncBalanceOf({account:address, args:[address as `0x${string}`]});
   const {data:buyHash, isSuccess: isBuySent, writeContract} = useWriteGncBuy();
   const [mintTokenNumber, setMintTokenNumber] = useState(0);
   const { authStatus } = useAppProvider();
@@ -62,6 +62,7 @@ export default function TopUpDialogButton({ gameStatus }: TopUpDialogButtonProps
         variant:"success"
       });
       setMintTokenNumber(0);
+      refetchBalance();
     }
   }, [isBuySent]);
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function TopUpDialogButton({ gameStatus }: TopUpDialogButtonProps
         title: "Transaction Confirmed",
         description: `Previsou top up has been confirmed in the blockchain.`,
       });
+      refetchBalance();
     }
   }, [isBuyConfirmed]);
   return (

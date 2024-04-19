@@ -1,12 +1,11 @@
 'use client';
-import { MouseEvent, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
 import FlipCards from "@/components/custom/FlipCards";
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useWaitForTransactionReceipt } from "wagmi";
 import { useClientContextProvider } from "@/providers/ClientContextProvider";
-import { useWatchSinglePlayerGameNumberGuessedEvent, useWatchSinglePlayerGameOneGameEndedEvent, useWriteSinglePlayerGameGuessNumber, useReadSinglePlayerGameCheckGameStatus } from "@/hooks/generated";
-import SinglePlayerGameNumberGuessedEventListener from "../hooks/SinglePlayerGameNumberGuessedEventListener";
+import { useWriteSinglePlayerGameGuessNumber, useReadSinglePlayerGameCheckGameStatus } from "@/hooks/generated";
 interface SinglePlayerGameProps {
     hasFoundMatch: "Client" | "Opponent" | false;
     setHasFoundMatch: (value: "Client" | "Opponent" | false) => void;
@@ -105,13 +104,13 @@ export default function SinglePlayerGame({ hasFoundMatch, setHasFoundMatch, setC
     }
     return (
         <>
-            {(false && address && singlePlayerGameNumber !== undefined) && <SinglePlayerGameNumberGuessedEventListener address={address} gameNumber={singlePlayerGameNumber} setHasFoundMatch={setHasFoundMatch} setGuessResults={setGuessResults} isFetchingRef={isFetchingRef} />}
+            {/* {(false && address && singlePlayerGameNumber !== undefined) && <SinglePlayerGameNumberGuessedEventListener address={address} gameNumber={singlePlayerGameNumber} setHasFoundMatch={setHasFoundMatch} setGuessResults={setGuessResults} isFetchingRef={isFetchingRef} />} */}
             <div className={`flex flex-row`}>
                 <div className={`flex flex-col items-center justify-center z-[50] select-none transition-opacity duration-500`}>
                     <h1 className={`${hasFoundMatch === 'Client' ? "text-md md:text-2xl lg:text-4xl text-shadow-success" : "text-2xl md:text-4xl lg:text-7xl"} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
                         {Object.keys(guessResults).length < 10 && !hasFoundMatch ? "Choose Your Fortune!" : hasFoundMatch === 'Client' ? '🎉 Congratulations! You found a match! 🎉' : '❌ Sorry! No match found! ❌'}
                     </h1>
-                    <FlipCards setLastClickedIndex={setLastClickedIndex} handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isFetchingRef={isFetchingRef} />
+                    <FlipCards setLastClickedIndex={setLastClickedIndex} handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isFetchingRef={isFetchingRef} />
                     <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch === 'Client' ? "" : "opacity-[0%] hidden"}`}>
                         <div className="flex flex-col items-center justify-center gap-4">
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"
