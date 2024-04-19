@@ -21,7 +21,7 @@ export default function Page() {
   const [hasFoundMatch, setHasFoundMatch] = useState<"Client" | "Opponent" | false>(false);
   const { address, singlePlayerGameNumber, multiPlayerGameNumber } = useClientContextProvider();
   const { toast } = useToast();
-  const { data: WriteSinglePlayerGameStartGameHash, writeContract: WriteSinglePlayerGameStartGame } = useWriteSinglePlayerGameStartGame();
+  const { data: WriteSinglePlayerGameStartGameHash, writeContract: WriteSinglePlayerGameStartGame, error,failureReason } = useWriteSinglePlayerGameStartGame();
   const { data: WriteMultiPlayerGameStartGameHash, writeContract: WriteMultiPlayerGameStartGame } = useWriteMultiPlayerGameStartGame();
   const { isLoading: isWriteMultiPlayerGameStartGameConfirming, isSuccess: isWriteMultiPlayerGameStartGameConfirmed   } = useWaitForTransactionReceipt({
     hash: WriteMultiPlayerGameStartGameHash,
@@ -39,10 +39,17 @@ export default function Page() {
     useWaitForTransactionReceipt({
       hash: approveHash,
     })
-  const { data: isWriteSinglePlayerGameData, isLoading: isWriteSinglePlayerGameStartGameConfirming, isSuccess: isWriteSinglePlayerGameStartGameConfirmed } = useWaitForTransactionReceipt({
+  const { data: isWriteSinglePlayerGameData, isLoading: isWriteSinglePlayerGameStartGameConfirming, isSuccess: isWriteSinglePlayerGameStartGameConfirmed, } = useWaitForTransactionReceipt({
+    hash: WriteSinglePlayerGameStartGameHash,
+  })
+  const resp = useWaitForTransactionReceipt({
     hash: WriteSinglePlayerGameStartGameHash,
   })
   useEffect(() => {
+    console.log(error,failureReason)
+  }, [error,failureReason])
+  useEffect(() => {
+
     if (isWriteSinglePlayerGameStartGameConfirmed) {
       console.log("write single player game start game confirmed")
       if (gameStatus === "StartingSinglePlayerGame") {
@@ -69,7 +76,7 @@ export default function Page() {
     if (isApproveConfirmed) {
       console.log("approve confirmed")
       if (gameStatus === "StartingSinglePlayerGame") {
-
+        console.log("starting single player game...")
         WriteSinglePlayerGameStartGame({ account: address, args: [BigInt(42)] }); // seed
       }
       else if (gameStatus === "StartingMultiPlayerGame") {

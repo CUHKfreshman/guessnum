@@ -697,13 +697,6 @@ export const singlePlayerGameAbi = [
     name: 'GameStarted',
   },
   {
-    type: 'function',
-    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
-    name: 'guessNumber',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'nonpayable',
-  },
-  {
     type: 'event',
     anonymous: false,
     inputs: [
@@ -761,20 +754,6 @@ export const singlePlayerGameAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'quitGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
-    name: 'startGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
     name: 'calculateWinnings',
     outputs: [
@@ -824,6 +803,13 @@ export const singlePlayerGameAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
+    name: 'guessNumber',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
     name: 'isGameTimeout',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -845,6 +831,13 @@ export const singlePlayerGameAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'quitGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
     name: 'remainingTime',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -856,6 +849,13 @@ export const singlePlayerGameAbi = [
     name: 'stakeAmount',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
+    name: 'startGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -874,7 +874,7 @@ export const singlePlayerGameAbi = [
 ] as const
 
 export const singlePlayerGameAddress =
-  '0xd8c3d3fDc954958998f405beBb81903e071413BF' as const
+  '0xb7056D6e9D6BC32352043aFB8ECeFC998E8870c6' as const
 
 export const singlePlayerGameConfig = {
   address: singlePlayerGameAddress,

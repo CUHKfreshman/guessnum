@@ -16,7 +16,7 @@ export default defineConfig({
     },
     {
       name: 'SinglePlayerGame',
-      address: "0xd8c3d3fDc954958998f405beBb81903e071413BF",
+      address: "0xb7056D6e9D6BC32352043aFB8ECeFC998E8870c6",
       abi: SinglePlayerGameAbi,
     },
     {
