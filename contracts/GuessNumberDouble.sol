@@ -28,6 +28,7 @@ contract GuessNumberGame {
         address starter;
         uint256 startTime;
         uint256 mostRecentGuessedNumber; // 最近猜测的数字
+        bool isRound1end; // 第一局游戏是否结束
     }
 
     mapping(uint256 => Game) public games;
@@ -82,13 +83,14 @@ contract GuessNumberGame {
             winningNumber2: winningNumber2,
             starter: address(0),
             startTime: block.timestamp,
-            mostRecentGuessedNumber: 10
+            mostRecentGuessedNumber: 10,
+            isRound1end: false
         });
         nextGameNumber++;
     }
 
     // check game status, call by player
-    function checkGameStatus() public view returns (bool, bool, uint256, uint256, uint256) {
+    function checkGameStatus() public view returns (bool, bool, uint256, uint256, uint256, bool){
         address player1 = msg.sender;
         (uint256 gameNumber, ) = getPlayerGameNumber(player1);
         require(gameNumber != 0, "Player is not in any game");
@@ -100,7 +102,8 @@ contract GuessNumberGame {
         uint256 remainingPool = game.totalPool;
         uint256 roundNumber = game.roundNumber;
         uint256 mostRecentGuessedNumber = game.mostRecentGuessedNumber;
-        return (isMyTurn, isGameEnded, remainingPool, roundNumber, mostRecentGuessedNumber);
+        bool isRound1end = game.isRound1end;
+        return (isMyTurn, isGameEnded, remainingPool, roundNumber, mostRecentGuessedNumber, isRound1end);
     }
     
     function guessNumber(uint256 guess) external {
@@ -113,7 +116,7 @@ contract GuessNumberGame {
         Game storage game = games[gameNumber];
 
         // 获取游戏状态
-        (bool isMyTurn, bool isGameOver, , uint256 roundNumber, ) = checkGameStatus();
+        (bool isMyTurn, bool isGameOver, , uint256 roundNumber, , ) = checkGameStatus();
 
         // 确保游戏正在进行中
         require(!isGameOver, "Game is not in progress");
@@ -150,6 +153,7 @@ contract GuessNumberGame {
             if (game.roundNumber == 1) {
                 game.roundNumber++;
                 game.turnNumber = 0;
+                game.isRound1end = true;
 
                 game.platformFee = gameFee;
                 game.totalPool = stakeAmount;

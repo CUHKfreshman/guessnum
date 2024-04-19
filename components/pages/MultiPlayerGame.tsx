@@ -52,20 +52,20 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     useEffect(() => {
         const gameStatusData = fetchGameStatusData.data;
         console.log("gameStatusData", fetchGameStatusData)
-        //!IMPORTANT: uncomment this block after the gameStatusData is ready
-        // if (gameStatusData) {
-        //     const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber] = gameStatusData;
-        //     const mostRecentIndex = Number(_mostRecentNumber);
-        //     if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
-        //     setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
-        //     setIsMyTurn(_isMyTurn);
-        //     setGuessResults(prevGuessResults => ({
-        //         ...prevGuessResults,
-        //         [mostRecentIndex]: _isGameEnded
-        //     }));
-        //     isFetchingRef.current = false;
-        //     // round number is handled in below useEffect
-        // }
+        // !IMPORTANT: uncomment this block after the gameStatusData is ready
+        if (gameStatusData) {
+            const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRound1end] = gameStatusData;
+            const mostRecentIndex = Number(_mostRecentNumber);
+            if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
+            setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
+            setIsMyTurn(_isMyTurn);
+            setGuessResults(prevGuessResults => ({
+                ...prevGuessResults,
+                [mostRecentIndex]: _isGameEnded
+            }));
+            isFetchingRef.current = false;
+            // round number is handled in below useEffect
+        }
     }, [fetchGameStatusData]);
     useEffect(() => {
         const displayTitle = () => {
