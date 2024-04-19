@@ -124,7 +124,7 @@ contract GuessNumberGame {
         Game storage game = games[gameNumber];
 
         // 获取游戏状态
-        (bool isMyTurn, bool isGameOver, , uint256 roundNumber, , ) = checkGameStatus();
+        (bool isMyTurn, bool isGameOver, uint256 remianingPool, uint256 roundNumber, uint256 mostRecentGuessedNumber, bool isRound1end) = checkGameStatus();
 
         // 确保游戏正在进行中
         require(!isGameOver, "Game is not in progress");
@@ -135,6 +135,11 @@ contract GuessNumberGame {
 
         // 确保猜测在有效范围内
         require(guess >= 0 && guess <= 9, "Guess is out of range");
+
+        // 如果第二局游戏开始，第一局游戏结束，改变isRound1end状态
+        if (roundNumber == 2 && isRound1end == false) {
+            game.isRound1end = true;
+        }
 
         // 更新最近猜测的数字
         game.mostRecentGuessedNumber = guess;
@@ -161,7 +166,7 @@ contract GuessNumberGame {
             if (game.roundNumber == 1) {
                 game.roundNumber++;
                 game.turnNumber = 0;
-                game.isRound1end = true;
+                game.isRound1end = true; // 第一局结束
 
                 game.platformFee = gameFee;
                 game.totalPool = stakeAmount;
@@ -204,9 +209,9 @@ contract GuessNumberGame {
         require(game.isGameInProgress, "Game is not in progress");
 
         uint256 currentFee;
-        if (game.turnNumber <= 5) {
+        if (game.turnNumber <= 3) {
             currentFee = 1;
-        } else if (game.turnNumber <= 11) {
+        } else if (game.turnNumber <= 7) {
             currentFee = 2;
         } else {
             currentFee = 3;
