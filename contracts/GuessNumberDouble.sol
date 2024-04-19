@@ -166,11 +166,9 @@ contract GuessNumberGame {
         // 更新最近猜测的数字
         game.mostRecentGuessedNumber = guess;
 
-        // mark the current player as "guessed"
         // 标记玩家已经猜过
         // hasGuessed[gameNumber][msg.sender] = true;
 
-        // 触发玩家猜测数字的事件
         emit NumberGuessed(gameNumber, player1, guess);
 
         // check player's guess
@@ -261,7 +259,7 @@ contract GuessNumberGame {
     function quitGame() external {
         uint256 platformFee;
         uint256 playerFee;
-        // when a player quits halfway, it loses
+        // player will lose when he/she quits the game halfway
         // 确定赢家和输家
         address loser = msg.sender;
         (uint gameNumber, address winner) = getPlayerGameNumber(loser);
@@ -306,7 +304,9 @@ contract GuessNumberGame {
                 return (i, game.player1);
             }
         }
-        return (0, address(0)); // 如果玩家不在任何房间中，则返回 (0, address(0))
+        // returns (0, address(0)) if player not in any room
+        // 如果玩家不在任何房间中，则返回 (0, address(0))
+        return (0, address(0)); 
     }
 
     function isGameTimeout(uint256 gameID) public view returns (bool) {
