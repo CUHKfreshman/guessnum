@@ -72,6 +72,9 @@ contract GuessNumberGame {
         require(roomNumber != 0, "Player is not in any room");
         // 确保房间已经有两名玩家加入
         require(player2 != address(0), "Room is not full");
+        // 检查是否已经在游戏中
+        (uint gameNumber, ) = getPlayerGameNumber(player1);
+        require(gameNumber == 0, "Player is already in a game");
 
         // 创建游戏
         createGame(roomNumber, player1, player2, winningNumber1, winningNumber2);
