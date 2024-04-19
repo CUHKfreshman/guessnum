@@ -203,7 +203,7 @@ contract GuessNumberSinglePlayer {
 
 
     function getPlayerGameNumber(address player1) public view returns (uint256) {
-        for (uint256 i = 1; i <= nextGameNumber; i++) {
+        for (uint256 i = nextGameNumber; i > 0; i--) {
             Game storage game = games[i];
             if (game.player1 == player1 && game.isGameInProgress) {
                 return (i);
