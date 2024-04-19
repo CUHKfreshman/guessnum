@@ -875,7 +875,7 @@ export const singlePlayerGameAbi = [
 ] as const
 
 export const singlePlayerGameAddress =
-  '0xb7056D6e9D6BC32352043aFB8ECeFC998E8870c6' as const
+  '0x35CDe12FD3d25652719c801d4eABA50F7D1800D6' as const
 
 export const singlePlayerGameConfig = {
   address: singlePlayerGameAddress,
