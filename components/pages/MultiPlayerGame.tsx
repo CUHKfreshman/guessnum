@@ -54,17 +54,17 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
         console.log("gameStatusData", fetchGameStatusData)
         // !IMPORTANT: uncomment this block after the gameStatusData is ready
         if (gameStatusData) {
-            const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRound1end] = gameStatusData;
+            const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend] = gameStatusData;
             const mostRecentIndex = Number(_mostRecentNumber);
-            if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
-            setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
+            // if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
+            if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn && _isRoundend === false) { return; } // new
+            // setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
+            setHasFoundMatch(!_isRoundend ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround, new
             setIsMyTurn(_isMyTurn);
             setGuessResults(prevGuessResults => ({
                 ...prevGuessResults,
-                [mostRecentIndex]: _isGameEnded
-            // changed catch game 1 end 
-            
-            
+                // [mostRecentIndex]: _isGameEnded
+                [mostRecentIndex]: _isRoundend // new
             }));
             isFetchingRef.current = false;
             // round number is handled in below useEffect
