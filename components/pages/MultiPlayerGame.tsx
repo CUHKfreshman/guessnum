@@ -23,10 +23,13 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     const [showRoundOverlay, setShowRoundOverlay] = useState<boolean>(true);
     const [isMyTurn, setIsMyTurn] = useState<boolean>(false);
     const [roundNumber, setRoundNumber] = useState<number>(1);
+    const [needTriggerNextRoundEffect, setNeedTriggerNextRoundEffect] = useState<boolean>(false);
+    const [hasTriggeredNextRoundEffect, setHasTriggeredNextRoundEffect] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("");
     const [fadeTitle, setFadeTitle] = useState<boolean>(false);
     const [lastClickedIndex, setLastClickedIndex] = useState<number>(-1);
     const [mostRecentIndex, setMostRecentIndex] = useState<number>(-1);
+    const [isEnteringNextRound, setIsEnteringNextRound] = useState<boolean>(false);
     const isFetchingRef = useRef<boolean>(false);
     const { gameStatus, setGameStatus } = useGameStatusProvider();
     const { address } = useClientContextProvider();
@@ -50,12 +53,17 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     }, []);
     useEffect(() => {
         const gameStatusData = fetchGameStatusData.data;
-        console.log("gameStatusData", fetchGameStatusData)
+        // console.log("gameStatusData", fetchGameStatusData)
         // !IMPORTANT: uncomment this block after the gameStatusData is ready
         if (gameStatusData) {
             const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend] = gameStatusData;
+            console.log("game status data", _isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber, _isRoundend)
             const _mostRecentIndex = Number(_mostRecentNumber);
-            if (roundNumber === Number(_roundNumber) && _mostRecentIndex === mostRecentIndex) { return; } // new
+            if ((roundNumber === Number(_roundNumber) && _mostRecentIndex === mostRecentIndex) || isEnteringNextRound) { return; } // new
+            if(roundNumber === 1 && Number(_roundNumber) === 2){
+                setNeedTriggerNextRoundEffect(true);
+            }
+            console.log("game status data active! ",roundNumber, _roundNumber, mostRecentIndex, _mostRecentIndex, isEnteringNextRound)
             setMostRecentIndex(_mostRecentIndex);
             // setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
             setHasFoundMatch(!(_isRoundend||_isGameEnded) ? false : (_mostRecentIndex === lastClickedIndex) ? "Client" : "Opponent"); // workround, new
@@ -68,7 +76,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
             isFetchingRef.current = false;
             // round number is handled in below useEffect
         }
-    }, [fetchGameStatusData]);
+    }, [fetchGameStatusData.data]);
     useEffect(() => {
         const displayTitle = () => {
             switch (hasFoundMatch) {
@@ -89,6 +97,16 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
             setFadeTitle(false);
         }, 500);
         if (hasFoundMatch && roundNumber == 1) {
+            setHasTriggeredNextRoundEffect(true);
+            console.log("round 1 ended");
+            setTimeout(() => {
+                setRoundNumber(2);
+                handleTryAgain("MultiPlayerGameNextRound");
+            }, 2000);
+        }
+        else if (needTriggerNextRoundEffect){
+            setNeedTriggerNextRoundEffect(false);
+            setHasTriggeredNextRoundEffect(true);
             setTimeout(() => {
                 setRoundNumber(2);
                 handleTryAgain("MultiPlayerGameNextRound");
@@ -100,6 +118,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
             // show the flip cards after 1s
             setShowRoundOverlay(true);
             setTimeout(() => {
+                setIsEnteringNextRound(false);
                 setFadeRoundOverlay(false);
             }, 1000);
             setTimeout(() => {
@@ -113,6 +132,8 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
         }, 500);
     }, [fadeRoundOverlay]);
     const handleTryAgain = (tryAgainType: "MultiPlayerGameNextRound" | "MultiPlayerGame") => {
+        console.log("try again", tryAgainType);
+        setIsEnteringNextRound(tryAgainType === "MultiPlayerGameNextRound");
         setFlippedCards({});
         setGuessResults({});
         setHasFoundMatch(false);

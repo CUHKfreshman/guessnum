@@ -139,10 +139,13 @@ contract RandomMatchmaking {
         uint256) {
         for (uint256 i = 1; i < nextRoomNumber; i++) {
             Room storage room = rooms[i];
+            if(isRoomActive(i)){
+                
             if (room.player1 == player1) {
                 return (i, room.player2, room.winningNumber1, room.winningNumber2);
             } else if (room.player2 == player1) {
                 return (i, room.player1, room.winningNumber1, room.winningNumber2);
+            }
             }
         }
         return (0, address(0), 0, 0); // 如果玩家不在任何房间中，则返回 0

@@ -224,13 +224,6 @@ export const gncConfig = { address: gncAddress, abi: gncAbi } as const
 
 export const matchMakingAbi = [
   {
-    type: 'function',
-    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
-    name: 'deleteRoomIfTimeout',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
     type: 'constructor',
     inputs: [{ name: '_token', internalType: 'address', type: 'address' }],
     stateMutability: 'nonpayable',
@@ -259,13 +252,6 @@ export const matchMakingAbi = [
       },
     ],
     name: 'GameStarted',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
-    name: 'joinGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'event',
@@ -307,14 +293,8 @@ export const matchMakingAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'roomNumber', internalType: 'uint256', type: 'uint256' },
-      { name: 'winner', internalType: 'address', type: 'address' },
-      { name: 'prize', internalType: 'uint256', type: 'uint256' },
-      { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'platformFee', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'settleGame',
+    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'deleteRoomIfTimeout',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -346,6 +326,13 @@ export const matchMakingAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
+    name: 'joinGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'maxNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -355,6 +342,13 @@ export const matchMakingAbi = [
     type: 'function',
     inputs: [],
     name: 'nextRoomNumber',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'roomTimeout',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -376,10 +370,16 @@ export const matchMakingAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'roomTimeout',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
+    inputs: [
+      { name: 'roomNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'winner', internalType: 'address', type: 'address' },
+      { name: 'prize', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'platformFee', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'settleGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -405,7 +405,7 @@ export const matchMakingAbi = [
 ] as const
 
 export const matchMakingAddress =
-  '0x3CB876Ee3fcFeE3d6519d851a4e0b7e3303ce995' as const
+  '0x22fFd8E4a4a819406f4A2767B49261E35d6b26d9' as const
 
 export const matchMakingConfig = {
   address: matchMakingAddress,
@@ -469,13 +469,6 @@ export const multiPlayerGameAbi = [
     name: 'GameStarted',
   },
   {
-    type: 'function',
-    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
-    name: 'guessNumber',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
     type: 'event',
     anonymous: false,
     inputs: [
@@ -524,27 +517,6 @@ export const multiPlayerGameAbi = [
       },
     ],
     name: 'OneGameEnded',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'quitGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
-    name: 'resetGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'startGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -615,6 +587,13 @@ export const multiPlayerGameAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
+    name: 'guessNumber',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'gameID', internalType: 'uint256', type: 'uint256' }],
     name: 'isGameTimeout',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -645,10 +624,24 @@ export const multiPlayerGameAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'quitGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'gameID', internalType: 'uint256', type: 'uint256' }],
     name: 'remainingTime',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'resetGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -657,10 +650,17 @@ export const multiPlayerGameAbi = [
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'startGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
 ] as const
 
 export const multiPlayerGameAddress =
-  '0xC7daE073A4F40127aA21B2a6f6787a71f6F754fe' as const
+  '0x2809eA978ed00E5321a45814d7CcE565Cbeb4F44' as const
 
 export const multiPlayerGameConfig = {
   address: multiPlayerGameAddress,
@@ -1225,15 +1225,6 @@ export const useReadMatchMakingNextRoomNumber =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"rooms"`
- */
-export const useReadMatchMakingRooms = /*#__PURE__*/ createUseReadContract({
-  abi: matchMakingAbi,
-  address: matchMakingAddress,
-  functionName: 'rooms',
-})
-
-/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"roomTimeout"`
  */
 export const useReadMatchMakingRoomTimeout =
@@ -1242,6 +1233,15 @@ export const useReadMatchMakingRoomTimeout =
     address: matchMakingAddress,
     functionName: 'roomTimeout',
   })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"rooms"`
+ */
+export const useReadMatchMakingRooms = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+  functionName: 'rooms',
+})
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"stakeAmount"`

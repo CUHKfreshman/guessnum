@@ -12,14 +12,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useWaitForTransactionReceipt } from "wagmi";
 import { useClientContextProvider } from "@/providers/ClientContextProvider";
-import { useReadMatchMakingGetPlayerRoomNumber,useWriteMatchMakingJoinGame, singlePlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useWriteSinglePlayerGameStartGame, matchMakingAddress } from "@/hooks/generated";
+import { useWriteMatchMakingJoinGame, singlePlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useWriteSinglePlayerGameStartGame, matchMakingAddress } from "@/hooks/generated";
 // import SinglePlayerGameStartEventListener from "@/components/hooks/SinglePlayerGameStartEventListener";
 export default function Page() {
   const { animateWaves, setAnimateWaves } = useAnimateWavesProvider();
   const { gameStatus, setGameStatus } = useGameStatusProvider();
   const [currentPage, setCurrentPage] = useState<"Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame">("Home");
   const [hasFoundMatch, setHasFoundMatch] = useState<"Client" | "Opponent" | false>(false);
-  const { address, singlePlayerGameNumber, multiPlayerGameNumber } = useClientContextProvider();
+  const { address, singlePlayerGameNumber, multiPlayerGameNumber, matchMakingRoomNumber } = useClientContextProvider();
   const { toast } = useToast();
   const { data: WriteSinglePlayerGameStartGameHash, writeContract: WriteSinglePlayerGameStartGame, error,failureReason } = useWriteSinglePlayerGameStartGame();
   const { data: WriteMultiPlayerGameStartGameHash, writeContract: WriteMultiPlayerGameStartGame } = useWriteMultiPlayerGameStartGame();
@@ -115,16 +115,16 @@ export default function Page() {
   }, [singlePlayerGameNumber])
   useEffect(() => {
     if (gameStatus === "NotInGame" || gameStatus==="StartingMultiPlayerGame") {
-      if (multiPlayerGameNumber !== undefined && multiPlayerGameNumber.toString() !== "0") {
+      if (matchMakingRoomNumber !== undefined && matchMakingRoomNumber.toString() !== "0") {
         toast({
           title: "Multiplayer Game Matched",
           description: "Opponent found, connect to start the game!",
-          action: <ToastAction altText="Connect" onClick={() => { handleStartNewGame("MultiPlayerGame", multiPlayerGameNumber) }}>Connect</ToastAction>,
+          action: <ToastAction altText="Connect" onClick={() => { handleStartNewGame("MultiPlayerGame", matchMakingRoomNumber) }}>Connect</ToastAction>,
           variant: "success",
         });
       }
     }
-  }, [multiPlayerGameNumber])
+  }, [matchMakingRoomNumber])
   const renderPage = () => {
     switch (currentPage) {
       case 'Home':
@@ -176,7 +176,7 @@ export default function Page() {
     }
     else if (showOptions === "MultiPlayerGame") {
       console.log("game number", gameNumber, gameStatus)
-      if(gameNumber!==undefined && gameStatus==="NotInGame"){
+      if(gameNumber!==undefined && (gameStatus==="NotInGame" || Number(multiPlayerGameNumber ?? 0) > 0)){
         handleEnterGame("MultiPlayerGame");
         return
       }

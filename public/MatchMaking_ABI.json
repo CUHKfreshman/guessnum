@@ -2,19 +2,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "roomNumber",
-				"type": "uint256"
-			}
-		],
-		"name": "deleteRoomIfTimeout",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "_token",
 				"type": "address"
@@ -47,19 +34,6 @@
 		],
 		"name": "GameStarted",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "seed",
-				"type": "uint256"
-			}
-		],
-		"name": "joinGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -105,29 +79,9 @@
 				"internalType": "uint256",
 				"name": "roomNumber",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "winner",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "prize",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "platformFee",
-				"type": "uint256"
 			}
 		],
-		"name": "settleGame",
+		"name": "deleteRoomIfTimeout",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -205,6 +159,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "seed",
+				"type": "uint256"
+			}
+		],
+		"name": "joinGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "maxNumber",
 		"outputs": [
@@ -220,6 +187,19 @@
 	{
 		"inputs": [],
 		"name": "nextRoomNumber",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "roomTimeout",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -285,16 +265,36 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "roomTimeout",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "roomNumber",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "winner",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "prize",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "platformFee",
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "settleGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

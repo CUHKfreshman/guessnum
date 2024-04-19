@@ -21,12 +21,12 @@ export default defineConfig({
     },
     {
       name: 'MultiPlayerGame',
-      address: "0xC7daE073A4F40127aA21B2a6f6787a71f6F754fe",
+      address: "0x2809eA978ed00E5321a45814d7CcE565Cbeb4F44",
       abi: MultiPlayerGameAbi,
     },
     {
       name: 'MatchMaking',
-      address: "0x3CB876Ee3fcFeE3d6519d851a4e0b7e3303ce995",
+      address: "0x22fFd8E4a4a819406f4A2767B49261E35d6b26d9",
       abi: MatchMakingAbi,
     },
   ],
