@@ -224,6 +224,13 @@ export const gncConfig = { address: gncAddress, abi: gncAbi } as const
 
 export const matchMakingAbi = [
   {
+    type: 'function',
+    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'deleteRoomIfTimeout',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
     type: 'constructor',
     inputs: [{ name: '_token', internalType: 'address', type: 'address' }],
     stateMutability: 'nonpayable',
@@ -252,6 +259,20 @@ export const matchMakingAbi = [
       },
     ],
     name: 'GameStarted',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
+    name: 'joinGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'resetRoom',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'event',
@@ -293,8 +314,14 @@ export const matchMakingAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
-    name: 'deleteRoomIfTimeout',
+    inputs: [
+      { name: 'roomNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'winner', internalType: 'address', type: 'address' },
+      { name: 'prize', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'platformFee', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'settleGame',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -320,16 +347,9 @@ export const matchMakingAbi = [
   {
     type: 'function',
     inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
-    name: 'isRoomActive',
+    name: 'isRoomFull',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
     stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
-    name: 'joinGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -347,13 +367,6 @@ export const matchMakingAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'roomTimeout',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     name: 'rooms',
     outputs: [
@@ -365,21 +378,16 @@ export const matchMakingAbi = [
       { name: 'winningNumber2', internalType: 'uint256', type: 'uint256' },
       { name: 'seed1', internalType: 'uint256', type: 'uint256' },
       { name: 'seed2', internalType: 'uint256', type: 'uint256' },
+      { name: 'isRoomActive', internalType: 'bool', type: 'bool' },
     ],
     stateMutability: 'view',
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'roomNumber', internalType: 'uint256', type: 'uint256' },
-      { name: 'winner', internalType: 'address', type: 'address' },
-      { name: 'prize', internalType: 'uint256', type: 'uint256' },
-      { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'platformFee', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'settleGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    inputs: [],
+    name: 'roomTimeout',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -405,7 +413,7 @@ export const matchMakingAbi = [
 ] as const
 
 export const matchMakingAddress =
-  '0x22fFd8E4a4a819406f4A2767B49261E35d6b26d9' as const
+  '0xd92E21e0f8e82BfF4EA06a515935Be058D561648' as const
 
 export const matchMakingConfig = {
   address: matchMakingAddress,
@@ -469,6 +477,13 @@ export const multiPlayerGameAbi = [
     name: 'GameStarted',
   },
   {
+    type: 'function',
+    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
+    name: 'guessNumber',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
     type: 'event',
     anonymous: false,
     inputs: [
@@ -517,6 +532,20 @@ export const multiPlayerGameAbi = [
       },
     ],
     name: 'OneGameEnded',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'quitGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'startGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -587,13 +616,6 @@ export const multiPlayerGameAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'guess', internalType: 'uint256', type: 'uint256' }],
-    name: 'guessNumber',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [{ name: 'gameID', internalType: 'uint256', type: 'uint256' }],
     name: 'isGameTimeout',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -624,24 +646,10 @@ export const multiPlayerGameAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'quitGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [{ name: 'gameID', internalType: 'uint256', type: 'uint256' }],
     name: 'remainingTime',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'gameNumber', internalType: 'uint256', type: 'uint256' }],
-    name: 'resetGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -650,17 +658,10 @@ export const multiPlayerGameAbi = [
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'startGame',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
 ] as const
 
 export const multiPlayerGameAddress =
-  '0x2809eA978ed00E5321a45814d7CcE565Cbeb4F44' as const
+  '0x91Ae40b176a31740437eeEbB47B9d75D0417af38' as const
 
 export const multiPlayerGameConfig = {
   address: multiPlayerGameAddress,
@@ -1196,14 +1197,15 @@ export const useReadMatchMakingIsPlayerInRoom =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"isRoomActive"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"isRoomFull"`
  */
-export const useReadMatchMakingIsRoomActive =
-  /*#__PURE__*/ createUseReadContract({
+export const useReadMatchMakingIsRoomFull = /*#__PURE__*/ createUseReadContract(
+  {
     abi: matchMakingAbi,
     address: matchMakingAddress,
-    functionName: 'isRoomActive',
-  })
+    functionName: 'isRoomFull',
+  },
+)
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"maxNumber"`
@@ -1225,6 +1227,15 @@ export const useReadMatchMakingNextRoomNumber =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"rooms"`
+ */
+export const useReadMatchMakingRooms = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+  functionName: 'rooms',
+})
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"roomTimeout"`
  */
 export const useReadMatchMakingRoomTimeout =
@@ -1233,15 +1244,6 @@ export const useReadMatchMakingRoomTimeout =
     address: matchMakingAddress,
     functionName: 'roomTimeout',
   })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"rooms"`
- */
-export const useReadMatchMakingRooms = /*#__PURE__*/ createUseReadContract({
-  abi: matchMakingAbi,
-  address: matchMakingAddress,
-  functionName: 'rooms',
-})
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"stakeAmount"`
@@ -1302,6 +1304,16 @@ export const useWriteMatchMakingJoinGame = /*#__PURE__*/ createUseWriteContract(
 )
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"resetRoom"`
+ */
+export const useWriteMatchMakingResetRoom =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'resetRoom',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"settleGame"`
  */
 export const useWriteMatchMakingSettleGame =
@@ -1337,6 +1349,16 @@ export const useSimulateMatchMakingJoinGame =
     abi: matchMakingAbi,
     address: matchMakingAddress,
     functionName: 'joinGame',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"resetRoom"`
+ */
+export const useSimulateMatchMakingResetRoom =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'resetRoom',
   })
 
 /**
@@ -1533,16 +1555,6 @@ export const useWriteMultiPlayerGameQuitGame =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link multiPlayerGameAbi}__ and `functionName` set to `"resetGame"`
- */
-export const useWriteMultiPlayerGameResetGame =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: multiPlayerGameAbi,
-    address: multiPlayerGameAddress,
-    functionName: 'resetGame',
-  })
-
-/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link multiPlayerGameAbi}__ and `functionName` set to `"startGame"`
  */
 export const useWriteMultiPlayerGameStartGame =
@@ -1579,16 +1591,6 @@ export const useSimulateMultiPlayerGameQuitGame =
     abi: multiPlayerGameAbi,
     address: multiPlayerGameAddress,
     functionName: 'quitGame',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link multiPlayerGameAbi}__ and `functionName` set to `"resetGame"`
- */
-export const useSimulateMultiPlayerGameResetGame =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: multiPlayerGameAbi,
-    address: multiPlayerGameAddress,
-    functionName: 'resetGame',
   })
 
 /**

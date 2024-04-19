@@ -55,6 +55,19 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "guess",
+				"type": "uint256"
+			}
+		],
+		"name": "guessNumber",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -103,6 +116,20 @@
 		],
 		"name": "OneGameEnded",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "quitGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "startGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -291,19 +318,6 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "guess",
-				"type": "uint256"
-			}
-		],
-		"name": "guessNumber",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "gameID",
 				"type": "uint256"
 			}
@@ -359,13 +373,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "quitGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -385,19 +392,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "gameNumber",
-				"type": "uint256"
-			}
-		],
-		"name": "resetGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "stakeAmount",
 		"outputs": [
@@ -408,13 +402,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "startGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

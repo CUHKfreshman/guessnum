@@ -136,11 +136,11 @@ contract RandomMatchmaking {
         uint256) {
         for (uint256 i = 1; i < nextRoomNumber; i++) {
             Room storage room = rooms[i];
-            if(isRoomActive(i)){
+            if(room.isRoomActive){
                 
             if (room.player1 == player1) {
                 return (i, room.player2, room.winningNumber1, room.winningNumber2);
-            } else if (room.player2 == player1 && room.isRoomActive) {
+            } else if (room.player2 == player1) {
                 return (i, room.player1, room.winningNumber1, room.winningNumber2);
             }
             }
