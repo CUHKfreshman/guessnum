@@ -7,7 +7,7 @@ contract RandomMatchmaking {
     IERC20 public token;
     uint256 public constant stakeAmount = 20; // 每个玩家的赌注数量
     uint256 public constant tokenAmount = 10; // 代币的单位，按代币的decimals来
-    uint256 public constant roomTimeout = 10 seconds; // 房间超时时间
+    uint256 public constant roomTimeout = 100 seconds; // 房间超时时间
     uint256 public constant maxNumber = 10; // 最大猜测数字范围
 
     struct Room {

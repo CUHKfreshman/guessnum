@@ -413,7 +413,7 @@ export const matchMakingAbi = [
 ] as const
 
 export const matchMakingAddress =
-  '0xeC6dB2EcF6cBA6f147F4a2548baabcc941D78c3e' as const
+  '0xfAFEd46ee3fdC87581911d2D67DFa8371048428A' as const
 
 export const matchMakingConfig = {
   address: matchMakingAddress,
@@ -661,7 +661,7 @@ export const multiPlayerGameAbi = [
 ] as const
 
 export const multiPlayerGameAddress =
-  '0x954d2a8dEE7128aB7986D87E93AEdC999Fad6Fd8' as const
+  '0x93d2bE2246fe2cB1AC56B1B0Fbb19Cbc1EeB29AE' as const
 
 export const multiPlayerGameConfig = {
   address: multiPlayerGameAddress,
