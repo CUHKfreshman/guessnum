@@ -4,26 +4,6 @@ pragma solidity 0.8.25;
 import "./RandomMatchmaking.sol";  // 引入RandomMatchmaking合约
 import "./IERC20.sol";
 
-// ERC20:
-// 1. view balance
-// 2.mint(amount)
-// Single Player
-// 1. check game status =>return (boolean, int)(游戏是否完结，奖池剩余金额)view function,
-// 2. send guess(number)
-// 送guess去游戏
-// 3. is in game
-// 看是否在单人游戏中view function
-// 4. join game
-// 加入单人游戏
-// 5. remaining time
-// 这局游戏还剩多少时间
-// Multi Player
-// 1. check game status =>return (boolean, boolean, int, int)view function，三个返回值(是否是我的回合，游戏是否结束，奖池剩余金额，第几回合)
-// 2. is in game
-// 3. join game
-// 4. remaining time
-// 5. send guess
-
 
 // multiple inheritance
 contract GuessNumberGame {

@@ -106,7 +106,7 @@ contract RandomMatchmaking {
     function generateWinningNumbers(uint256 seed1, uint256 seed2) private pure returns (uint256, uint256) {
         uint256 number1 = uint256(keccak256(abi.encodePacked(seed1, seed2)));
         uint256 number2 = uint256(keccak256(abi.encodePacked(seed2, seed1)));
-        return (number1 % maxNumber + 1, number2 % maxNumber + 1); // 生成 1 到 maxNumber 之间的数字
+        return (number1 % maxNumber, number2 % maxNumber); // 生成 1 到 maxNumber 之间的数字
     }
 
     // 游戏结算
