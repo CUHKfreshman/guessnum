@@ -19,7 +19,6 @@ contract RandomMatchmaking {
         uint256 winningNumber2;
         uint256 seed1;
         uint256 seed2;
-        bool isRoomActive;
     }
 
     mapping(uint256 => Room) public rooms;
@@ -34,7 +33,7 @@ contract RandomMatchmaking {
     }
 
     // 检查房间是否活跃（即已满员）
-    function isRoomFull(uint256 roomNumber) public view returns (bool) {
+    function isRoomActive(uint256 roomNumber) public view returns (bool) {
         return rooms[roomNumber].isFull;
     }
 
@@ -70,9 +69,7 @@ contract RandomMatchmaking {
         for (uint256 i = 1; i <= nextRoomNumber; i++) {
             Room storage room = rooms[i];
             if (room.player1 == player || room.player2 == player) {
-                if (room.isRoomActive){
-                    return true;
-                }
+                return true;
             }
         }
         return false;
@@ -82,14 +79,14 @@ contract RandomMatchmaking {
     // 寻找可用房间，如果没有则创建新房间
     function findAvailableRoom() private returns (uint256) {
         for(uint256 i = 1; i < nextRoomNumber; i++) {
-            if (!rooms[i].isFull && rooms[i].isRoomActive) {
+            if (!rooms[i].isFull) {
                 return i;
             }
         }
 
         // 没有空闲房间，创建一个新的房间
         uint256 newRoomNumber = nextRoomNumber;
-        rooms[newRoomNumber] = Room({player1: address(0), player2: address(0), lastActionTime: block.timestamp, isFull: false, winningNumber1: 0, winningNumber2: 0, seed1: 0, seed2: 0, isRoomActive: true});
+        rooms[newRoomNumber] = Room({player1: address(0), player2: address(0), lastActionTime: block.timestamp, isFull: false, winningNumber1: 0, winningNumber2: 0, seed1: 0, seed2: 0});
         nextRoomNumber++;
         return newRoomNumber;
     }
@@ -109,14 +106,13 @@ contract RandomMatchmaking {
     function generateWinningNumbers(uint256 seed1, uint256 seed2) private pure returns (uint256, uint256) {
         uint256 number1 = uint256(keccak256(abi.encodePacked(seed1, seed2)));
         uint256 number2 = uint256(keccak256(abi.encodePacked(seed2, seed1)));
-        return (number1 % maxNumber, number2 % maxNumber); // 生成 1 到 maxNumber 之间的数字
+        return (number1 % maxNumber + 1, number2 % maxNumber + 1); // 生成 1 到 maxNumber 之间的数字
     }
 
     // 游戏结算
     function settleGame(uint256 roomNumber, address winner, uint256 prize, address owner, uint256 platformFee) public {
         Room storage room = rooms[roomNumber];
         require(room.isFull, "Room not full");
-        require(room.isRoomActive, "Room not activate");
 
         // 转移奖金给赢家
         require(token.transfer(winner, prize), "Failed to transfer winnings to winner");
@@ -128,21 +124,25 @@ contract RandomMatchmaking {
     // 重置房间
     function resetRoom(uint256 roomNumber) public {
         Room storage room = rooms[roomNumber];
-        room.isRoomActive = false;
+        room.player1 = address(0);
+        room.player2 = address(0);
+        room.isFull = false;
+        room.lastActionTime = block.timestamp;
+        room.winningNumber1 = 0;
+        room.winningNumber2 = 0;
+        room.seed1 = 0;
+        room.seed2 = 0;
     }
 
     // 获取房间信息
     function getPlayerRoomNumber(address player1) public view returns (uint256, address player2, uint256,
         uint256) {
-        for (uint256 i = nextRoomNumber; i > 0; i--) {
+        for (uint256 i = 1; i < nextRoomNumber; i++) {
             Room storage room = rooms[i];
-            if(room.isRoomActive){
-                
             if (room.player1 == player1) {
                 return (i, room.player2, room.winningNumber1, room.winningNumber2);
             } else if (room.player2 == player1) {
                 return (i, room.player1, room.winningNumber1, room.winningNumber2);
-            }
             }
         }
         return (0, address(0), 0, 0); // 如果玩家不在任何房间中，则返回 0
