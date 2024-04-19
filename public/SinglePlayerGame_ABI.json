@@ -30,6 +30,25 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "guess",
+				"type": "uint256"
+			}
+		],
+		"name": "guessNumber",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -84,6 +103,26 @@
 		],
 		"name": "OneGameEnded",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "quitGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "seed",
+				"type": "uint256"
+			}
+		],
+		"name": "startGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -212,25 +251,6 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "guess",
-				"type": "uint256"
-			}
-		],
-		"name": "guessNumber",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "gameNumber",
 				"type": "uint256"
 			}
@@ -273,13 +293,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "quitGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -299,47 +312,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "gameNumber",
-				"type": "uint256"
-			}
-		],
-		"name": "resetGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "gameNumber",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "winner",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "prize",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "platformFee",
-				"type": "uint256"
-			}
-		],
-		"name": "settleGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "stakeAmount",
 		"outputs": [
@@ -350,19 +322,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "seed",
-				"type": "uint256"
-			}
-		],
-		"name": "startGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

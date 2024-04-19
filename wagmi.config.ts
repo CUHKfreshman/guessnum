@@ -16,17 +16,17 @@ export default defineConfig({
     },
     {
       name: 'SinglePlayerGame',
-      address: "0x8EF365921E38d880341bAadB8b998ED6003d95CB",
+      address: "0xd8c3d3fDc954958998f405beBb81903e071413BF",
       abi: SinglePlayerGameAbi,
     },
     {
       name: 'MultiPlayerGame',
-      address: "0xc5b37BB38c20f384b357Af96044b3CCd2F575B3E",
+      address: "0x98131Ba87d000634Cb370fB9095e430B6E6fAf0C",
       abi: MultiPlayerGameAbi,
     },
     {
       name: 'MatchMaking',
-      address: "0x001F4bc8B50Af54e8Dc35Cb22F07B7D0c0487349",
+      address: "0xc0aB08B6D2A9cfcD1eE45994fdE5ab68ADb745f1",
       abi: MatchMakingAbi,
     },
   ],
