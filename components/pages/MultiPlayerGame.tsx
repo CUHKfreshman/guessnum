@@ -1,12 +1,14 @@
 'use client';
 import { MouseEvent, useEffect, useState, useRef } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { fetchGuessResult } from '@/apis/gameApi';
 import { useAnimateWavesProvider } from "@/providers/AnimateWavesProvider";
 import { useCheckGameStatus, useSendGuess } from "@/hooks/gameHooks";
 import FlipCards from "@/components/custom/FlipCards"
 import RoundOverlay from "@/components/custom/RoundOverlay"
 import { useGameStatusProvider } from "@/providers/GameStatusProvider";
+import { useClientContextProvider } from "@/providers/ClientContextProvider";
+import { useReadMultiPlayerGameCheckGameStatus, useWriteMultiPlayerGameGuessNumber } from "@/hooks/generated";
+import { useWaitForTransactionReceipt } from "wagmi";
 interface MultiPlayerGameProps {
     hasFoundMatch: "Client" | "Opponent" | false;
     setHasFoundMatch: (value: "Client" | "Opponent" | false) => void;
@@ -25,8 +27,72 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
     const [roundNumber, setRoundNumber] = useState<number>(1);
     const [title, setTitle] = useState<string>("");
     const [fadeTitle, setFadeTitle] = useState<boolean>(false);
+    const [lastClickedIndex, setLastClickedIndex] = useState<number>(-1);
     const isFetchingRef = useRef<boolean>(false);
     const { gameStatus, setGameStatus } = useGameStatusProvider();
+    const { address } = useClientContextProvider();
+    const fetchGameStatusData = useReadMultiPlayerGameCheckGameStatus({ account: address });
+    const { data: sendGuessHash, writeContract: sendGuessNumber } = useWriteMultiPlayerGameGuessNumber();
+    const { data: guessTransactionData } =
+        useWaitForTransactionReceipt({
+            hash: sendGuessHash,
+        })
+    useEffect(() => {
+        console.log("res", guessTransactionData)
+        if (guessTransactionData === undefined) { return; }
+        fetchGameStatusData.refetch()
+    }, [guessTransactionData]);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log("refetching game status data")
+            fetchGameStatusData.refetch()
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+    useEffect(() => {
+        const gameStatusData = fetchGameStatusData.data;
+        console.log("gameStatusData", fetchGameStatusData)
+        //!IMPORTANT: uncomment this block after the gameStatusData is ready
+        // if (gameStatusData) {
+        //     const [_isMyTurn, _isGameEnded, _remainingPool, _roundNumber, _mostRecentNumber] = gameStatusData;
+        //     const mostRecentIndex = Number(_mostRecentNumber);
+        //     if (roundNumber === Number(_roundNumber) && isMyTurn === _isMyTurn) { return; }
+        //     setHasFoundMatch(!_isGameEnded ? false : (mostRecentIndex=== lastClickedIndex) ? "Client" : "Opponent"); // workround
+        //     setIsMyTurn(_isMyTurn);
+        //     setGuessResults(prevGuessResults => ({
+        //         ...prevGuessResults,
+        //         [mostRecentIndex]: _isGameEnded
+        //     }));
+        //     isFetchingRef.current = false;
+        //     // round number is handled in below useEffect
+        // }
+    }, [fetchGameStatusData]);
+    useEffect(() => {
+        const displayTitle = () => {
+            switch (hasFoundMatch) {
+                case "Client":
+                    return "🎉 Congratulations! You found a match! 🎉";
+                case "Opponent":
+                    return "❌ Opponent won this round... ❌";
+                default:
+                    if (isMyTurn) {
+                        return "Choose Your Fortune!";
+                    }
+                    return "Waiting for the opponent...";
+            }
+        }
+        setFadeTitle(true);
+        setTimeout(() => {
+            setTitle(displayTitle());
+            setFadeTitle(false);
+        }, 500);
+        if (hasFoundMatch && roundNumber == 1) {
+            setTimeout(() => {
+                setRoundNumber(2);
+                handleTryAgain("MultiPlayerGameNextRound");
+            }, 2000);
+        }
+    }, [hasFoundMatch, isMyTurn]);
     useEffect(() => {
         if (gameStatus === "InMultiPlayerGame") {
             // show the flip cards after 1s
@@ -59,11 +125,12 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
         }
     }
     const handleSendGuess = (index: number) => {
-    
+        isFetchingRef.current = true;
+        sendGuessNumber({ account: address, args: [BigInt(index)] });
     }
     const handleBack = () => {
         setAnimateWaves(true);
-        setTimeout(()=>{
+        setTimeout(() => {
             setAnimateWaves(false);
         }, 1000);
         setTimeout(() => {
@@ -73,32 +140,6 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
         }, 500);
 
     }
-    useEffect(() => {
-        const displayTitle = () => {
-            switch (hasFoundMatch) {
-                case "Client":
-                    return "🎉 Congratulations! You found a match! 🎉";
-                case "Opponent":
-                    return "❌ Opponent won this round... ❌";
-                default:
-                    if (isMyTurn) {
-                        return "Choose Your Fortune!";
-                    }
-                    return "Waiting for the opponent...";
-            }
-        }
-        setFadeTitle(true);
-        setTimeout(() => {
-            setTitle(displayTitle());
-            setFadeTitle(false);
-        }, 500);
-        if (hasFoundMatch && roundNumber == 1) {
-            setTimeout(() => {
-                setRoundNumber(prev => prev + 1);
-                handleTryAgain("MultiPlayerGameNextRound");
-            }, 2000);
-        }
-    }, [hasFoundMatch, isMyTurn]);
     return (
         <>
             <div className={`flex flex-row`}>
@@ -107,7 +148,7 @@ export default function MultiPlayerGame({ hasFoundMatch, setHasFoundMatch, setCu
                     <h1 className={`${hasFoundMatch === 'Client' ? "text-md md:text-2xl lg:text-4xl text-shadow-success" : "text-2xl md:text-4xl lg:text-7xl"} ${fadeTitle ? "opacity-0" : ""} transition-all duration-300 text-slate-100 mb-4 font-bold text-nowrap`}>
                         {title}
                     </h1>
-                    <FlipCards handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} isFetchingRef={isFetchingRef} setIsMyTurn={setIsMyTurn} />
+                    <FlipCards setLastClickedIndex={setLastClickedIndex} handleSendGuess={handleSendGuess} hasFoundMatch={hasFoundMatch} setHasFoundMatch={setHasFoundMatch} flippedCards={flippedCards} setFlippedCards={setFlippedCards} guessResults={guessResults} setGuessResults={setGuessResults} isMyTurn={isMyTurn} isFetchingRef={isFetchingRef} setIsMyTurn={setIsMyTurn} />
                     <div className={`fixed bottom-0 h-1/4 w-full flex flex-col items-center justify-center z-[50] transition ease-in-out duration-500 ${hasFoundMatch && roundNumber >= 2 ? "" : "opacity-[0%] hidden"}`}>
                         <div className="flex flex-col items-center justify-center gap-4">
                             <button className="btn text-yellow-300 text-lg uppercase animate-pulse select-none"

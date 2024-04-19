@@ -20,12 +20,12 @@ export default function SinglePlayerGame({ hasFoundMatch, setHasFoundMatch, setC
     const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
     const [guessResults, setGuessResults] = useState<{ [key: number]: boolean | null }>({});
     const [lastClickedIndex, setLastClickedIndex] = useState<number>(-1);
-    const [remainingStake, setRemainingStake] = useState<number>(20);
+    // const [remainingStake, setRemainingStake] = useState<number>(20);
     const { setGameStatus } = useGameStatusProvider();
     const { address, singlePlayerGameNumber } = useClientContextProvider();
     const { data: gameStatusData } = useReadSinglePlayerGameCheckGameStatus({ account: address });
     const { data: sendGuessHash, writeContract: sendGuessNumber } = useWriteSinglePlayerGameGuessNumber();
-    const {data:guessTransactionData} =
+    const { data: guessTransactionData } =
         useWaitForTransactionReceipt({
             hash: sendGuessHash,
         })
@@ -77,10 +77,6 @@ export default function SinglePlayerGame({ hasFoundMatch, setHasFoundMatch, setC
 
     const handleSendGuess = (index: number) => {
         isFetchingRef.current = true;
-        setFlippedCards(prevFlippedCards => ({
-            ...prevFlippedCards,
-            [index]: true
-        }));
         sendGuessNumber({ account: address, args: [BigInt(index)] });
     }
     const handleTryAgain = () => {

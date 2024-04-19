@@ -1,6 +1,6 @@
 import { defineConfig } from '@wagmi/cli'
 import { etherscan, react } from '@wagmi/cli/plugins'
-import { greetingsAbi, GNCAbi, MultiPlayerGameAbi, SinglePlayerGameAbi } from '@/hooks/abi'
+import { greetingsAbi, GNCAbi, MultiPlayerGameAbi, SinglePlayerGameAbi, MatchMakingAbi } from '@/hooks/abi'
 export default defineConfig({
   out: 'hooks/generated.ts',
   contracts: [
@@ -21,8 +21,13 @@ export default defineConfig({
     },
     {
       name: 'MultiPlayerGame',
-      address: "0x0eF50afB3Bf0274e71530108b13CC854Dd63279c",
+      address: "0xc5b37BB38c20f384b357Af96044b3CCd2F575B3E",
       abi: MultiPlayerGameAbi,
+    },
+    {
+      name: 'MatchMaking',
+      address: "0x001F4bc8B50Af54e8Dc35Cb22F07B7D0c0487349",
+      abi: MatchMakingAbi,
     },
   ],
   plugins: [

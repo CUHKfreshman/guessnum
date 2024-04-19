@@ -15,24 +15,36 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useWaitForTransactionReceipt } from "wagmi";
 import { useClientContextProvider } from "@/providers/ClientContextProvider";
-import { singlePlayerGameAddress, multiPlayerGameAddress, useWriteGncApprove, useSimulateSinglePlayerGameStartGame, useReadSinglePlayerGameGetPlayerGameNumber, useWriteSinglePlayerGameStartGame, useWatchSinglePlayerGameGameStartedEvent } from "@/hooks/generated";
+import { useWriteMatchMakingJoinGame, singlePlayerGameAddress, multiPlayerGameAddress, useWriteGncApprove, useWriteMultiPlayerGameStartGame, useReadSinglePlayerGameGetPlayerGameNumber, useWriteSinglePlayerGameStartGame, useWatchSinglePlayerGameGameStartedEvent, matchMakingAddress } from "@/hooks/generated";
 import SinglePlayerGameStartEventListener from "@/components/hooks/SinglePlayerGameStartEventListener";
 export default function Page() {
   const { animateWaves, setAnimateWaves } = useAnimateWavesProvider();
   const { gameStatus, setGameStatus } = useGameStatusProvider();
   const [currentPage, setCurrentPage] = useState<"Home" | "PreGame" | "SinglePlayerGame" | "MultiPlayerGame">("Home");
   const [hasFoundMatch, setHasFoundMatch] = useState<"Client" | "Opponent" | false>(false);
-  const { address,singlePlayerGameNumber} = useClientContextProvider();
+  const { address, singlePlayerGameNumber, multiPlayerGameNumber } = useClientContextProvider();
   const { toast } = useToast();
   const { data: WriteSinglePlayerGameStartGameHash, writeContract: WriteSinglePlayerGameStartGame } = useWriteSinglePlayerGameStartGame();
+  const { data: WriteMultiPlayerGameStartGameHash, writeContract: WriteMultiPlayerGameStartGame } = useWriteMultiPlayerGameStartGame();
+  const { isLoading: isWriteMultiPlayerGameStartGameConfirming, isSuccess: isWriteMultiPlayerGameStartGameConfirmed   } = useWaitForTransactionReceipt({
+    hash: WriteMultiPlayerGameStartGameHash,
+  })
+  useEffect(() => {
+    if(isWriteMultiPlayerGameStartGameConfirmed){
+      console.log("write multi player game start game confirmed")
+      handleEnterGame("MultiPlayerGame");
+    }
+  }, [isWriteMultiPlayerGameStartGameConfirmed])
+  const { data: WriteMatchMakingJoinGameHash, writeContract: WriteMatchMakingJoinGame } = useWriteMatchMakingJoinGame();
+
   const { data: approveHash, writeContract: approveGNC } = useWriteGncApprove();
   const { isLoading: isApproveConfirming, isSuccess: isApproveConfirmed } =
     useWaitForTransactionReceipt({
       hash: approveHash,
     })
-  const { data:isWriteSinglePlayerGameData,isLoading: isWriteSinglePlayerGameStartGameConfirming, isSuccess: isWriteSinglePlayerGameStartGameConfirmed } = useWaitForTransactionReceipt({
-      hash: WriteSinglePlayerGameStartGameHash,
-    })
+  const { data: isWriteSinglePlayerGameData, isLoading: isWriteSinglePlayerGameStartGameConfirming, isSuccess: isWriteSinglePlayerGameStartGameConfirmed } = useWaitForTransactionReceipt({
+    hash: WriteSinglePlayerGameStartGameHash,
+  })
   useEffect(() => {
     if (isWriteSinglePlayerGameStartGameConfirmed) {
       console.log("write single player game start game confirmed")
@@ -41,12 +53,30 @@ export default function Page() {
       }
     }
   }, [isWriteSinglePlayerGameStartGameConfirmed])
+  const { data: isWriteMatchMakingData, isLoading: isWriteeMatchMakingConfirming, isSuccess: isWriteeMatchMakingConfirmed } = useWaitForTransactionReceipt({
+    hash: WriteMatchMakingJoinGameHash,
+  })
+  useEffect(() => {
+    if (isWriteeMatchMakingConfirmed) {
+      console.log("join match making room confirmed")
+      if (gameStatus === "StartingMultiPlayerGame") {
+        toast({
+          title: "Waiting for Opponent",
+          description: "You have joined the match making room, waiting for opponent to join...",
+        });
+      }
+    }
+  }, [isWriteeMatchMakingConfirmed])
+
   useEffect(() => {
     if (isApproveConfirmed) {
       console.log("approve confirmed")
-      if(gameStatus==="StartingSinglePlayerGame"){
-        
-          WriteSinglePlayerGameStartGame({ account: address, args: [BigInt(42)] }); // seed
+      if (gameStatus === "StartingSinglePlayerGame") {
+
+        WriteSinglePlayerGameStartGame({ account: address, args: [BigInt(42)] }); // seed
+      }
+      else if (gameStatus === "StartingMultiPlayerGame") {
+        WriteMatchMakingJoinGame({ account: address, args: [BigInt(42)] });
       }
     }
   }, [isApproveConfirmed])
@@ -54,30 +84,42 @@ export default function Page() {
   // useEffect(() => {
   //   console.log(resp)
   // }, [resp])
-  useWatchSinglePlayerGameGameStartedEvent({
-    args: { player1: address as `0x${string}`, gameNumber: singlePlayerGameNumber },
-    onLogs: (logs) => {
-      console.log("single player game started event!", logs);
-      //handleEnterGame("SinglePlayerGame");
-    },
-    onError: (error) => {
-      console.error("single player game started event error", error);
-    },
-    strict: true,
-    fromBlock: BigInt(0),
-  });
+  // useWatchSinglePlayerGameGameStartedEvent({
+  //   args: { player1: address as `0x${string}`, gameNumber: singlePlayerGameNumber },
+  //   onLogs: (logs) => {
+  //     console.log("single player game started event!", logs);
+  //     //handleEnterGame("SinglePlayerGame");
+  //   },
+  //   onError: (error) => {
+  //     console.error("single player game started event error", error);
+  //   },
+  //   strict: true,
+  //   fromBlock: BigInt(0),
+  // });
 
   useEffect(() => {
     if (gameStatus === "NotInGame") {
       if (singlePlayerGameNumber !== undefined && singlePlayerGameNumber.toString() !== "0") {
         toast({
-          title: "Unfinished Game",
+          title: "Unfinished Singleplayer Game",
           description: "You have an unfinished game, do you want to continue?",
           action: <ToastAction altText="Continue" onClick={() => { handleStartNewGame("SinglePlayerGame", singlePlayerGameNumber) }}>Continue</ToastAction>,
         });
       }
     }
   }, [singlePlayerGameNumber])
+  useEffect(() => {
+    if (gameStatus === "NotInGame") {
+      if (multiPlayerGameNumber !== undefined && multiPlayerGameNumber.toString() !== "0") {
+        toast({
+          title: "Multiplayer Game Matched",
+          description: "Opponent found, connect to start the game!",
+          action: <ToastAction altText="Connect" onClick={() => { handleStartNewGame("MultiPlayerGame", multiPlayerGameNumber) }}>Connect</ToastAction>,
+          variant: "success",
+        });
+      }
+    }
+  }, [multiPlayerGameNumber])
   const renderPage = () => {
     switch (currentPage) {
       case 'Home':
@@ -128,31 +170,31 @@ export default function Page() {
       // }, 500);
     }
     else if (showOptions === "MultiPlayerGame") {
-      // send join game request
-      // wait for response
-      // setTimeout(() => {
-      //     setSelectedGame("MultiPlayerGame");
-      // }, 500);
+      if(gameNumber!==undefined && gameStatus==="NotInGame"){
+        handleEnterGame("MultiPlayerGame");
+        return
+      }
       setGameStatus("StartingMultiPlayerGame");
-
-      // setTimeout(() => {
-      //   setGameStatus("InMultiPlayerGame");
-      // }, 1000);
-      // setTimeout(() => {
-      //   setCurrentPage("MultiPlayerGame");
-      // }, 1500);
+      // if is new game
+      if (gameNumber === undefined) {
+        console.log("start new game...")
+        approveGNC({ account: address, args: [matchMakingAddress, BigInt(1000)] });
+      }
+      else {
+        WriteMultiPlayerGameStartGame({ account: address });
+      }
     }
     else {
 
     }
   }
   return (
-    <main className={`relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 transition-colors duration-500 ease-in-out bg-gradient-base ${hasFoundMatch === "Client" ? "bg-gradient-success":""}`}>{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
+    <main className={`relative overflow-hidden flex min-h-screen flex-col items-center justify-center p-24 transition-colors duration-500 ease-in-out bg-gradient-base ${hasFoundMatch === "Client" ? "bg-gradient-success" : ""}`}>{/** bg-gradient-to-bl from-slate-800 via-indigo-900 to-slate-800 */}
       {/** 
       <img src="/wave.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       <img src="/wave2.svg" className="absolute h-1/2 w-full object-cover z-[1] top-0 opacity-[40%]" alt="Wave Background" />
       */}
-      {(address && singlePlayerGameNumber!==undefined) && <SinglePlayerGameStartEventListener address={address} gameNumber={singlePlayerGameNumber} handleEnterGame={handleEnterGame}/>}
+      {(address && singlePlayerGameNumber !== undefined) && <SinglePlayerGameStartEventListener address={address} gameNumber={singlePlayerGameNumber} handleEnterGame={handleEnterGame} />}
       <div className="fixed left-0 top-0 w-full h-20 z-[999]">
         <div className="flex items-center justify-between h-full px-4">
           <a href="https://github.com/CUHKfreshman/guessnum" className="mb-4 text-slate-500 font-bold select-none transition-colors duration-500 ease-in-out">🎲GUESS<span className={` transition-colors duration-500 ease-in-out ${hasFoundMatch === 'Client' ? "text-orange-500" : "text-sky-500"}`}>NUM</span></a>

@@ -219,6 +219,200 @@ export const gncAddress = '0x34A64c640eC0e9fBbb70E3dB966DfF57Ad579193' as const
 export const gncConfig = { address: gncAddress, abi: gncAbi } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MatchMaking
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const matchMakingAbi = [
+  {
+    type: 'constructor',
+    inputs: [{ name: '_token', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'roomNumber',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'player1',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'player2',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'GameStarted',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'roomNumber',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'createdBy',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'RoomCreated',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'roomNumber',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'joinedBy',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'RoomJoined',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'deleteRoomIfTimeout',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'player1', internalType: 'address', type: 'address' }],
+    name: 'getPlayerRoomNumber',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: 'player2', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'player', internalType: 'address', type: 'address' }],
+    name: 'isPlayerInRoom',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'roomNumber', internalType: 'uint256', type: 'uint256' }],
+    name: 'isRoomActive',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'seed', internalType: 'uint256', type: 'uint256' }],
+    name: 'joinGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'maxNumber',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'nextRoomNumber',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'roomTimeout',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'rooms',
+    outputs: [
+      { name: 'player1', internalType: 'address', type: 'address' },
+      { name: 'player2', internalType: 'address', type: 'address' },
+      { name: 'lastActionTime', internalType: 'uint256', type: 'uint256' },
+      { name: 'isFull', internalType: 'bool', type: 'bool' },
+      { name: 'winningNumber1', internalType: 'uint256', type: 'uint256' },
+      { name: 'winningNumber2', internalType: 'uint256', type: 'uint256' },
+      { name: 'seed1', internalType: 'uint256', type: 'uint256' },
+      { name: 'seed2', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'roomNumber', internalType: 'uint256', type: 'uint256' },
+      { name: 'winner', internalType: 'address', type: 'address' },
+      { name: 'prize', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'platformFee', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'settleGame',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'stakeAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'token',
+    outputs: [{ name: '', internalType: 'contract IERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'tokenAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+export const matchMakingAddress =
+  '0x001F4bc8B50Af54e8Dc35Cb22F07B7D0c0487349' as const
+
+export const matchMakingConfig = {
+  address: matchMakingAddress,
+  abi: matchMakingAbi,
+} as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MultiPlayerGame
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -482,7 +676,7 @@ export const multiPlayerGameAbi = [
 ] as const
 
 export const multiPlayerGameAddress =
-  '0x0eF50afB3Bf0274e71530108b13CC854Dd63279c' as const
+  '0xc5b37BB38c20f384b357Af96044b3CCd2F575B3E' as const
 
 export const multiPlayerGameConfig = {
   address: multiPlayerGameAddress,
@@ -1006,6 +1200,227 @@ export const useWatchGncTransferEvent =
     abi: gncAbi,
     address: gncAddress,
     eventName: 'Transfer',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__
+ */
+export const useReadMatchMaking = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"getPlayerRoomNumber"`
+ */
+export const useReadMatchMakingGetPlayerRoomNumber =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'getPlayerRoomNumber',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"isPlayerInRoom"`
+ */
+export const useReadMatchMakingIsPlayerInRoom =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'isPlayerInRoom',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"isRoomActive"`
+ */
+export const useReadMatchMakingIsRoomActive =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'isRoomActive',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"maxNumber"`
+ */
+export const useReadMatchMakingMaxNumber = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+  functionName: 'maxNumber',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"nextRoomNumber"`
+ */
+export const useReadMatchMakingNextRoomNumber =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'nextRoomNumber',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"roomTimeout"`
+ */
+export const useReadMatchMakingRoomTimeout =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'roomTimeout',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"rooms"`
+ */
+export const useReadMatchMakingRooms = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+  functionName: 'rooms',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"stakeAmount"`
+ */
+export const useReadMatchMakingStakeAmount =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'stakeAmount',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"token"`
+ */
+export const useReadMatchMakingToken = /*#__PURE__*/ createUseReadContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+  functionName: 'token',
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"tokenAmount"`
+ */
+export const useReadMatchMakingTokenAmount =
+  /*#__PURE__*/ createUseReadContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'tokenAmount',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__
+ */
+export const useWriteMatchMaking = /*#__PURE__*/ createUseWriteContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"deleteRoomIfTimeout"`
+ */
+export const useWriteMatchMakingDeleteRoomIfTimeout =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'deleteRoomIfTimeout',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"joinGame"`
+ */
+export const useWriteMatchMakingJoinGame = /*#__PURE__*/ createUseWriteContract(
+  {
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'joinGame',
+  },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"settleGame"`
+ */
+export const useWriteMatchMakingSettleGame =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'settleGame',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link matchMakingAbi}__
+ */
+export const useSimulateMatchMaking = /*#__PURE__*/ createUseSimulateContract({
+  abi: matchMakingAbi,
+  address: matchMakingAddress,
+})
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"deleteRoomIfTimeout"`
+ */
+export const useSimulateMatchMakingDeleteRoomIfTimeout =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'deleteRoomIfTimeout',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"joinGame"`
+ */
+export const useSimulateMatchMakingJoinGame =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'joinGame',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link matchMakingAbi}__ and `functionName` set to `"settleGame"`
+ */
+export const useSimulateMatchMakingSettleGame =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    functionName: 'settleGame',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link matchMakingAbi}__
+ */
+export const useWatchMatchMakingEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link matchMakingAbi}__ and `eventName` set to `"GameStarted"`
+ */
+export const useWatchMatchMakingGameStartedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    eventName: 'GameStarted',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link matchMakingAbi}__ and `eventName` set to `"RoomCreated"`
+ */
+export const useWatchMatchMakingRoomCreatedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    eventName: 'RoomCreated',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link matchMakingAbi}__ and `eventName` set to `"RoomJoined"`
+ */
+export const useWatchMatchMakingRoomJoinedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: matchMakingAbi,
+    address: matchMakingAddress,
+    eventName: 'RoomJoined',
   })
 
 /**
