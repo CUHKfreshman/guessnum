@@ -1,6 +1,7 @@
 # Guessnum
 
 __Guessnum__ is a decentralized application (dApp) for a number guessing game, developed as a part of the FT5004 course at the National University of Singapore (NUS). The project utilizes Next.js and Solidity, with a frontend styled using TailwindCSS and Shadcn. Web3 functionalities are implemented using RainbowKit, wagmi, and viem. It runs on Klaytn Baobab Testnet only.
+![image](https://github.com/CUHKfreshman/guessnum/assets/55826892/da60a8d8-98fc-4b26-87d8-ec17201f5dfa)
 
 ## Table of Contents
 
